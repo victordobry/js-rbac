@@ -8,7 +8,8 @@ export default class RbacHttpItemChildAdapter {
   async store(rbacItemChildren) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/item-children`, { rbacItemChildren }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -23,7 +24,8 @@ export default class RbacHttpItemChildAdapter {
   async load() {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/item-children`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -38,7 +40,8 @@ export default class RbacHttpItemChildAdapter {
   async create(parent, child) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/item-children`, { parent, child }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -53,7 +56,8 @@ export default class RbacHttpItemChildAdapter {
   async findByParent(parent) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/item-children/${parent}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {

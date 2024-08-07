@@ -8,7 +8,8 @@ export default class RbacHttpAssignmentAdapter {
   async store(rbacAssignments) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { rbacAssignments }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -23,7 +24,8 @@ export default class RbacHttpAssignmentAdapter {
   async load() {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -38,7 +40,8 @@ export default class RbacHttpAssignmentAdapter {
   async create(userId, role) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { userId, role }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -53,7 +56,8 @@ export default class RbacHttpAssignmentAdapter {
   async find(userId, role) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -68,7 +72,8 @@ export default class RbacHttpAssignmentAdapter {
   async findByUserId(userId) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -83,7 +88,8 @@ export default class RbacHttpAssignmentAdapter {
   async delete(userId, role) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -98,7 +104,8 @@ export default class RbacHttpAssignmentAdapter {
   async deleteByUser(userId) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
