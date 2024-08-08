@@ -8,7 +8,8 @@ export default class RbacHttpItemAdapter {
   async store(rbacItems) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/items`, { rbacItems }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -23,7 +24,8 @@ export default class RbacHttpItemAdapter {
   async load() {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/items`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -38,7 +40,8 @@ export default class RbacHttpItemAdapter {
   async create(name, type, rule) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/items`, { name, type, rule }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -53,7 +56,8 @@ export default class RbacHttpItemAdapter {
   async find(name) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/items/${name}`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -68,7 +72,8 @@ export default class RbacHttpItemAdapter {
   async findByType(type) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/items/${type}s`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {

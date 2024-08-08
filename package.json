@@ -1,25 +1,26 @@
 {
-    "name": "@brainstaff/rbac-workspaces",
-    "version": "0.1.0",
-    "description": "BrainStaff workspaces.",
-    "main": "index.js",
-    "author": "Alexey Kornilov <alexey.kornilov@kavolorn.ru>",
-    "license": "MIT",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/brainstaff/js-rbac.git"
-    },
-    "scripts": {
-        "clean": "lerna run clean",
-        "build": "lerna run build",
-        "test": "lerna run test",
-        "publish-all": "lerna run clean && lerna run build && lerna publish --git-remote upstream"
-    },
-    "workspaces": [
-        "packages/*"
-    ],
-    "devDependencies": {
-        "lerna": "^2.11.0"
-    }
+  "name": "@brainstaff/rbac-workspaces",
+  "version": "0.1.0",
+  "description": "BrainStaff workspaces.",
+  "main": "index.js",
+  "author": "Alexey Kornilov <alexey.kornilov@kavolorn.ru>",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brainstaff/js-rbac.git"
+  },
+  "scripts": {
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "publish-all": "lerna run clean && lerna run build && lerna publish --git-remote upstream"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^8.1.8"
+  },
+  "packageManager": "yarn@4.4.0"
 }

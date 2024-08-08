@@ -8,7 +8,8 @@ export default class RbacHttpRuleAdapter {
   async store(rbacRules) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { rbacRules }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -23,7 +24,8 @@ export default class RbacHttpRuleAdapter {
   async load() {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/rules`, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {
@@ -38,7 +40,8 @@ export default class RbacHttpRuleAdapter {
   async create(name) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { name }, {
-        headers: this.config.headers
+        headers: this.config.headers,
+        withCredentials: this.config.withCredentials,
       });
       return response.data;
     } catch (error) {

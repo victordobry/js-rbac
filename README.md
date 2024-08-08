@@ -4,6 +4,12 @@ This is a monorepo for flexible RBAC library which can be utilized in the browse
 
 ## Changelog
 
+### 1.0.0-beta.10
+
+- Update http adapter to support secure cookies.
+- Upgrade lerna.
+- Upgrade yarn.
+
 ### 1.0.0-beta.9
 
 - Fix postgres adapter.
