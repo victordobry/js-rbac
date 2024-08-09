@@ -14,7 +14,7 @@
     "clean": "lerna run clean",
     "build": "lerna run build",
     "test": "lerna run test",
-    "publish-all": "lerna run clean && lerna run build && lerna publish --git-remote upstream"
+    "publish-all": "lerna run clean && lerna run build && lerna publish --git-remote origin"
   },
   "workspaces": [
     "packages/*"
