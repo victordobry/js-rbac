@@ -5,7 +5,7 @@ export default class RbacMongodbRuleAdapter {
   }
 
   async store(rbacRules) {
-    await RbacRule.remove({});
+    await RbacRule.deleteMany({});
     return await RbacRule.create(rbacRules);
   }
 

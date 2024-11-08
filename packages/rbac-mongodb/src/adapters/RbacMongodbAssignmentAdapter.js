@@ -5,7 +5,7 @@ export default class RbacMongodbAssignmentAdapter {
   }
 
   async store(rbacAssignments) {
-    await RbacAssignment.remove({});
+    await RbacAssignment.deleteMany({});
     return await RbacAssignment.create(rbacAssignments);
   }
 
@@ -37,10 +37,10 @@ export default class RbacMongodbAssignmentAdapter {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
     }
 
-    return await RbacAssignment.findByIdAndRemove(currentRole._id);
+    return await RbacAssignment.findByIdAndDelete(currentRole._id);
   }
 
   async deleteByUser(userId) {
-    return await RbacAssignment.remove({ userId });
+    return await RbacAssignment.deleteMany({ userId });
   }
 }

@@ -5,7 +5,7 @@ export default class RbacMongodbItemChildAdapter {
   }
 
   async store(rbacItemChildren) {
-    await RbacItemChild.remove({});
+    await RbacItemChild.deleteMany({});
     return await RbacItemChild.create(rbacItemChildren);
   }
 

@@ -23,10 +23,10 @@
     "devDependencies": {
         "chai": "^4.1.2",
         "mocha": "^10.8.2",
-        "mongoose": "^5.2.3",
+        "mongoose": "^8.8.0",
         "rollup": "^4.24.4"
     },
     "peerDependencies": {
-        "mongoose": "^5.2.3"
+        "mongoose": "^8.8.0"
     }
 }
