@@ -78,7 +78,7 @@ __metadata:
   dependencies:
     "@brainstaff/rbac": "npm:^1.0.0-beta.10"
     chai: "npm:^4.1.2"
-    knex: "npm:^1.0.0"
+    knex: "npm:^3.1.0"
     mocha: "npm:^10.8.2"
     objection: "npm:^3.1.5"
     pg: "npm:^8.13.1"
@@ -2373,10 +2373,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:2.0.16":
-  version: 2.0.16
-  resolution: "colorette@npm:2.0.16"
-  checksum: 10c0/7430bd996545347f262ae9716bfc8ca3776606e9db854279082004f3141b15a64ad2ee0e4f10cacba5a07cc92ca3edc2d01cbe73fd2843ccd80e98d0e3a8e79b
+"colorette@npm:2.0.19":
+  version: 2.0.19
+  resolution: "colorette@npm:2.0.19"
+  checksum: 10c0/2bcc9134095750fece6e88167011499b964b78bf0ea953469130ddb1dba3c8fe6c03debb0ae181e710e2be10900d117460f980483a7df4ba4a1bac3b182ecb64
   languageName: node
   linkType: hard
 
@@ -2399,10 +2399,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^9.1.0":
-  version: 9.5.0
-  resolution: "commander@npm:9.5.0"
-  checksum: 10c0/5f7784fbda2aaec39e89eb46f06a999e00224b3763dc65976e05929ec486e174fe9aac2655f03ba6a5e83875bd173be5283dc19309b7c65954701c02025b3c1d
+"commander@npm:^10.0.0":
+  version: 10.0.1
+  resolution: "commander@npm:10.0.1"
+  checksum: 10c0/53f33d8927758a911094adadda4b2cbac111a5b377d8706700587650fd8f45b0bbe336de4b5c3fe47fd61f420a3d9bd452b6e0e6e5600a7e74d7bf0174f6efe3
   languageName: node
   linkType: hard
 
@@ -4412,12 +4412,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knex@npm:^1.0.0":
-  version: 1.0.7
-  resolution: "knex@npm:1.0.7"
+"knex@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "knex@npm:3.1.0"
   dependencies:
-    colorette: "npm:2.0.16"
-    commander: "npm:^9.1.0"
+    colorette: "npm:2.0.19"
+    commander: "npm:^10.0.0"
     debug: "npm:4.3.4"
     escalade: "npm:^3.1.1"
     esm: "npm:^3.2.25"
@@ -4425,14 +4425,12 @@ __metadata:
     getopts: "npm:2.3.0"
     interpret: "npm:^2.2.0"
     lodash: "npm:^4.17.21"
-    pg-connection-string: "npm:2.5.0"
+    pg-connection-string: "npm:2.6.2"
     rechoir: "npm:^0.8.0"
     resolve-from: "npm:^5.0.0"
     tarn: "npm:^3.0.2"
     tildify: "npm:2.0.0"
   peerDependenciesMeta:
-    "@vscode/sqlite3":
-      optional: true
     better-sqlite3:
       optional: true
     mysql:
@@ -4443,11 +4441,13 @@ __metadata:
       optional: true
     pg-native:
       optional: true
+    sqlite3:
+      optional: true
     tedious:
       optional: true
   bin:
     knex: bin/cli.js
-  checksum: 10c0/6425d48edccd456a1278e8089d23f7d4ef237627e0db01359f949e3ee6ce2ce6ac636e175ee6f84e7d1755047c5f34a36c5ff8136996bc2dbae74e24806af087
+  checksum: 10c0/d8a1f99fad143c6057e94759b2ae700ae661a0b0b2385f643011962ef501dcc7b32cfdb5bda66ef81283ca56f13630f47691c579ce66ad0e8128e209533c3785
   languageName: node
   linkType: hard
 
@@ -5977,10 +5977,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-connection-string@npm:2.5.0":
-  version: 2.5.0
-  resolution: "pg-connection-string@npm:2.5.0"
-  checksum: 10c0/4b1650132d8000d68864db774c4a99d98acf1cb90525045402b93d3b5a5f36500e5934c653598256cd86b3a310ba4639fbf1e8e1e04cefa46840838541b7626c
+"pg-connection-string@npm:2.6.2":
+  version: 2.6.2
+  resolution: "pg-connection-string@npm:2.6.2"
+  checksum: 10c0/e8fdea74fcc8bdc3d7c5c6eadd9425fdba7e67fb7fe836f9c0cecad94c8984e435256657d1d8ce0483d1fedef667e7a57e32449a63cb805cb0289fc34b62da35
   languageName: node
   linkType: hard
 
