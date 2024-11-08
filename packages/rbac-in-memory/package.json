@@ -14,7 +14,7 @@
     },
     "scripts": {
         "clean": "rm -rf dist",
-        "build": "rollup -c rollup.config.js",
+        "build": "rollup -c rollup.config.mjs",
         "test": "mocha"
     },
     "dependencies": {
@@ -22,6 +22,6 @@
     },
     "devDependencies": {
         "mocha": "^10.8.2",
-        "rollup": "^0.62.0"
+        "rollup": "^4.24.4"
     }
 }

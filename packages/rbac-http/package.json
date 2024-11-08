@@ -14,7 +14,7 @@
     },
     "scripts": {
         "clean": "rm -rf dist",
-        "build": "rollup -c rollup.config.js",
+        "build": "rollup -c rollup.config.mjs",
         "test": "mocha --recursive --require babel-core/register"
     },
     "dependencies": {
@@ -26,6 +26,6 @@
         "babel-preset-env": "^1.7.0",
         "express": "^4.16.3",
         "mocha": "^10.8.2",
-        "rollup": "^0.62.0"
+        "rollup": "^4.24.4"
     }
 }
