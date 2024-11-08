@@ -1,11 +1,11 @@
 import assert from 'assert';
 import express from 'express';
 
-import { RbacHttpAssignmentAdapter } from "../dist/index.js";
-import { RbacHttpItemAdapter } from "../dist/index.js";
-import { RbacHttpItemChildAdapter } from "../dist/index.js";
-import { RbacHttpRuleAdapter } from "../dist/index.js";
-import { RbacHttpAdapter } from "../dist/index.js";
+import { RbacHttpAssignmentAdapter } from '../dist/index.js';
+import { RbacHttpItemAdapter } from '../dist/index.js';
+import { RbacHttpItemChildAdapter } from '../dist/index.js';
+import { RbacHttpRuleAdapter } from '../dist/index.js';
+import { RbacHttpAdapter } from '../dist/index.js';
 
 describe('RbacHttpAssignmentAdapter', () => {
   const rbacAssignments = [

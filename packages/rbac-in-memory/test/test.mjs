@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import { RbacInMemoryAssignmentAdapter } from "../dist/index.js";
+import { RbacInMemoryAssignmentAdapter } from '../dist/index.js';
 
 const rbacGraph = {
   rbacAssignment: [],

@@ -1,7 +1,7 @@
 import assert from 'assert';
-import { RbacInMemoryAdapter } from "@brainstaff/rbac-in-memory";
+import { RbacInMemoryAdapter } from '@brainstaff/rbac-in-memory';
 
-import { RbacManager } from "../dist/index.js";
+import { RbacManager } from '../dist/index.js';
 
 const createRbacManager = async () => {
   const rbacAssignments = [
