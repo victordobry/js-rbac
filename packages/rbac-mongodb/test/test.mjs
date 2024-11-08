@@ -1,10 +1,10 @@
-const { expect } = require('chai');
+import { expect } from 'chai';
 
-const { RbacMongodbAssignmentAdapter } = require('../dist');
-const { RbacMongodbItemAdapter } = require('../dist');
-const { RbacMongodbItemChildAdapter } = require('../dist');
-const { RbacMongodbRuleAdapter } = require('../dist');
-const mongoose = require('mongoose');
+import { RbacMongodbAssignmentAdapter } from '../dist/index.js';
+import { RbacMongodbItemAdapter } from '../dist/index.js';
+import { RbacMongodbItemChildAdapter } from '../dist/index.js';
+import { RbacMongodbRuleAdapter } from '../dist/index.js';
+import mongoose from 'mongoose';
 
 class RbacMongodbConnection{
   constructor({mongodbConfiguration, logger}) {

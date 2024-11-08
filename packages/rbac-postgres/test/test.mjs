@@ -1,16 +1,16 @@
-const fs = require('fs');
-const { expect } = require('chai');
+import fs from 'node:fs';
+import { expect } from 'chai';
 
-const { RbacPostgresAssignmentAdapter } = require('../dist');
-const { RbacPostgresItemAdapter } = require('../dist');
-const { RbacPostgresItemChildAdapter } = require('../dist');
-const { RbacPostgresRuleAdapter } = require('../dist');
+import { RbacPostgresAssignmentAdapter } from '../dist/index.js';
+import { RbacPostgresItemAdapter } from '../dist/index.js';
+import { RbacPostgresItemChildAdapter } from '../dist/index.js';
+import { RbacPostgresRuleAdapter } from '../dist/index.js';
 
-const { RbacPostgresAdapter } = require('../dist');
+import { RbacPostgresAdapter } from '../dist/index.js';
 
 // Initializing connection to test DB
 
-let knex = require('knex')({
+let knex = (await import('knex')).default({
   client: 'pg',
   connection: {
     host: '127.0.0.1',
@@ -24,7 +24,7 @@ before(async () => {
   await knex.raw(`DROP DATABASE IF EXISTS rbac_postgres_test`);
   await knex.raw(`CREATE DATABASE rbac_postgres_test`);
   await knex.destroy();
-  knex = require('knex')({
+  knex = (await import ('knex')).default({
     client: 'pg',
     connection: {
       host: '127.0.0.1',

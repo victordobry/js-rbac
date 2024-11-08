@@ -1,11 +1,11 @@
-const assert = require('assert');
-const express = require('express');
+import assert from 'assert';
+import express from 'express';
 
-const { RbacHttpAssignmentAdapter } = require("../dist");
-const { RbacHttpItemAdapter } = require("../dist");
-const { RbacHttpItemChildAdapter } = require("../dist");
-const { RbacHttpRuleAdapter } = require("../dist");
-import {RbacHttpAdapter} from "../dist";
+import { RbacHttpAssignmentAdapter } from "../dist/index.js";
+import { RbacHttpItemAdapter } from "../dist/index.js";
+import { RbacHttpItemChildAdapter } from "../dist/index.js";
+import { RbacHttpRuleAdapter } from "../dist/index.js";
+import { RbacHttpAdapter } from "../dist/index.js";
 
 describe('RbacHttpAssignmentAdapter', () => {
   const rbacAssignments = [

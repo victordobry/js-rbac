@@ -1,7 +1,7 @@
-const assert = require('assert');
-const {RbacInMemoryAdapter} = require("@brainstaff/rbac-in-memory");
+import assert from 'assert';
+import { RbacInMemoryAdapter } from "@brainstaff/rbac-in-memory";
 
-const { RbacManager } = require("../dist");
+import { RbacManager } from "../dist/index.js";
 
 const createRbacManager = async () => {
   const rbacAssignments = [
