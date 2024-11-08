@@ -22,7 +22,7 @@
         "axios": "^0.18.0"
     },
     "devDependencies": {
-        "express": "^4.16.3",
+        "express": "^4.21.1",
         "mocha": "^10.8.2",
         "rollup": "^4.24.4"
     }
