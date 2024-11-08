@@ -7,7 +7,7 @@ networks:
       name: brainstaff
 services:
   mongo:
-    image: mongo:5
+    image: mongo:8
     volumes:
       - mongo:/data/db
     ports:
