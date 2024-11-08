@@ -15,7 +15,7 @@ services:
     container_name: brainstaff_mongo
     restart: unless-stopped
   postgres:
-    image: postgres:16
+    image: postgres:17
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
