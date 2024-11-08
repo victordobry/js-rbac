@@ -18,7 +18,7 @@
         "test": "mocha"
     },
     "devDependencies": {
-        "mocha": "^5.2.0",
+        "mocha": "^10.8.2",
         "rollup": "^0.62.0"
     }
 }
