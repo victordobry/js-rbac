@@ -15,7 +15,7 @@ let knex = require('knex')({
   connection: {
     host: '127.0.0.1',
     user: 'postgres',
-    password: '',
+    password: 'password',
     database: 'postgres'
   }
 });
@@ -23,18 +23,21 @@ let knex = require('knex')({
 before(async () => {
   await knex.raw(`DROP DATABASE IF EXISTS rbac_postgres_test`);
   await knex.raw(`CREATE DATABASE rbac_postgres_test`);
+  await knex.destroy();
   knex = require('knex')({
     client: 'pg',
     connection: {
       host: '127.0.0.1',
       user: 'postgres',
-      password: '',
+      password: 'password',
       database: 'rbac_postgres_test'
     }
   });
   await knex.raw(fs.readFileSync('./data/tables.sql', 'UTF-8'));
   new RbacPostgresAdapter({ knex });
 });
+
+after(() => knex.destroy());
 
 describe('RbacPostgresItemAdapter', () => {
   const rbacItems = [

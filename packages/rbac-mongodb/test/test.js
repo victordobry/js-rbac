@@ -43,6 +43,8 @@ const logger = {
 const mongooseConnection = new RbacMongodbConnection({ mongodbConfiguration, logger });
 const timeout = 10000;
 
+after(() => mongooseConnection.disconnect());
+
 describe('RbacMongodbAssignmentAdapter', () => {
   const rbacAssignments = [
     { userId: 'alexey', role: 'admin' },
@@ -202,10 +204,6 @@ describe('RbacMongodbRuleAdapter', () => {
     { name: 'IsOwnDocument' }
   ];
   const rbacRule = { name: 'IsGroupLeader' };
-
-  after(() => {
-    mongooseConnection.disconnect();
-  });
 
   it('should store many rules', async () => {
     const adapter = new RbacMongodbRuleAdapter();
