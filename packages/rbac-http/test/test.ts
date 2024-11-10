@@ -47,7 +47,8 @@ describe('RbacHttpAssignmentAdapter', () => {
       if (assignmentIndex !== -1) {
         rbacAssignments.splice(assignmentIndex, 1);
       } else {
-        return response.status(400).json({ message: `Role ${role} is not assigned to user ${userId}.` });
+        response.status(400).json({ message: `Role ${role} is not assigned to user ${userId}.` });
+        return;
       }
       response.status(200).send();
     });
@@ -133,7 +134,8 @@ describe('RbacHttpItemAdapter', () => {
       if (request.body.name) {
         const { name } = request.body;
         if (rbacItems.find(item => item.name === name)) {
-          return response.status(400).json({ message: `Item ${name} already exists.` });
+          response.status(400).json({ message: `Item ${name} already exists.` });
+          return;
         }
       }
       response.json(request.body);
@@ -220,7 +222,8 @@ describe('RbacHttpItemChildAdapter', () => {
       if (request.body.parent) {
         const { parent, child } = request.body;
         if (rbacItemChildren.find(itemChild => itemChild.parent === parent && itemChild.child === child)) {
-          return response.status(400).json({ message: `Association of ${parent} and ${child} already exists.` });
+          response.status(400).json({ message: `Association of ${parent} and ${child} already exists.` });
+          return;
         }
         response.status(200).json(request.body);
       }
@@ -295,7 +298,8 @@ describe('RbacHttpRuleAdapter', () => {
       if (request.body.name) {
         const { name } = request.body;
         if (rbacRules.find(itemChild => itemChild.name === name)) {
-          return response.status(400).json({ message: `Rule ${name} already exists.` });
+          response.status(400).json({ message: `Rule ${name} already exists.` });
+          return;
         }
         response.status(200).json(request.body);
       }

@@ -7,6 +7,9 @@ import { RbacMongodbRuleAdapter } from '../dist/index.js';
 import mongoose from 'mongoose';
 
 class RbacMongodbConnection{
+  private mongodbConfiguration: any;
+  private logger: any;
+
   constructor({mongodbConfiguration, logger}) {
     this.mongodbConfiguration = mongodbConfiguration;
     this.logger = logger;
@@ -65,7 +68,7 @@ describe('RbacMongodbAssignmentAdapter', () => {
     const adapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
-    const members = [];
+    const members: any[] = [];
     result.forEach(item => members.push(item.userId));
     expect(members).to.have.members([rbacAssignments[0].userId, rbacAssignments[1].userId]);
   }).timeout(timeout);
@@ -127,7 +130,7 @@ describe('RbacMongodbItemAdapter', () => {
     const adapter = new RbacMongodbItemAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
-    const members = [];
+    const members: any[] = [];
     result.forEach(item => members.push(item.name));
     expect(members).to.have.members(rbacItems.map(item => item.name));
   }).timeout(timeout);
@@ -136,14 +139,14 @@ describe('RbacMongodbItemAdapter', () => {
     const adapter = new RbacMongodbItemAdapter();
     const result = await adapter.findByType('role');
     expect(result).to.be.an('array').that.have.length(3);
-    const members = [];
+    const members: any[] = [];
     result.forEach(item => members.push(item.name));
     expect(members).to.have.members(rbacItems.reduce((result, item) => {
       if (item.type === 'role') {
         result.push(item.name);
       }
       return result;
-    }, []));
+    }, [] as any[]));
   }).timeout(timeout);
 
   it('should create single item', async () => {
@@ -180,7 +183,7 @@ describe('RbacMongodbItemChildAdapter', () => {
     const adapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
-    const members = [];
+    const members: any[] = [];
     result.forEach(item => members.push(item.parent));
     expect(members).to.have.members(rbacItemChildren.map(item => item.parent));
   }).timeout(timeout);
@@ -216,7 +219,7 @@ describe('RbacMongodbRuleAdapter', () => {
     const adapter = new RbacMongodbRuleAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
-    const members = [];
+    const members: any[] = [];
     result.forEach(item => members.push(item.name));
     expect(members).to.have.members(rbacRules.map(item => item.name));
   }).timeout(timeout);
