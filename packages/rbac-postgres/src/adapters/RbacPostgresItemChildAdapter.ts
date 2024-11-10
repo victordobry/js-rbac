@@ -3,7 +3,7 @@ import RbacItemChild from '../models/RbacItemChild';
 class RbacPostgresItemChildAdapter {
   async store(rbacItemChildren) {
     await RbacItemChild.query().delete();
-    const itemChildren = await RbacItemChild.query().insert(rbacItemChildren);
+    const itemChildren = await RbacItemChild.query().insert(rbacItemChildren) as any;
     return itemChildren.map(itemChild => itemChild.toJSON());
   }
 

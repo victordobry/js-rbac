@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-export default class RbacHttpItemChildAdapter {
+export default class RbacHttpRuleAdapter {
+  private config: any;
+
   constructor(config) {
     this.config = config;
   }
 
-  async store(rbacItemChildren) {
+  async store(rbacRules) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/item-children`, { rbacItemChildren }, {
+      const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { rbacRules }, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
@@ -23,7 +25,7 @@ export default class RbacHttpItemChildAdapter {
 
   async load() {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/item-children`, {
+      const response = await axios.get(`${this.config.baseUrl}/rbac/rules`, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
@@ -37,25 +39,9 @@ export default class RbacHttpItemChildAdapter {
     }
   }
 
-  async create(parent, child) {
+  async create(name) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/item-children`, { parent, child }, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
-      return response.data;
-    } catch (error) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
-    }
-  }
-
-  async findByParent(parent) {
-    try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/item-children/${parent}`, {
+      const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { name }, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });

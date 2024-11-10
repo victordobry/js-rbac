@@ -1,4 +1,9 @@
 export class RbacManager {
+  private rbacCacheAdapter: any;
+  private rbacPersistentAdapter: any;
+  private rbacRuleFactory: any;
+  private isCacheLoaded: any;
+
   constructor({ rbacCacheAdapter, rbacPersistentAdapter, rbacRuleFactory }) {
     this.rbacCacheAdapter = rbacCacheAdapter;
     this.rbacPersistentAdapter = rbacPersistentAdapter;

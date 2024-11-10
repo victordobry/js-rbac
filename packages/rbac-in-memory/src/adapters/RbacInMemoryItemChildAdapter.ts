@@ -1,4 +1,6 @@
 export default class RbacInMemoryItemChildAdapter {
+  private rbacItemChildren: any;
+
   constructor() {
     this.rbacItemChildren = [];
   }

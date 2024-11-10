@@ -3,7 +3,7 @@ import RbacAssignment from '../models/RbacAssignment';
 class RbacPostgresAssignmentAdapter {
   async store(rbacAssignments) {
     await RbacAssignment.query().delete();
-    const assignments = await RbacAssignment.query().insert(rbacAssignments);
+    const assignments = await RbacAssignment.query().insert(rbacAssignments) as any;
     return assignments.map(assignment => assignment.toJSON());
   }
 
@@ -41,10 +41,9 @@ class RbacPostgresAssignmentAdapter {
   }
 
   async deleteByUser(userId) {
-    let assignments = await RbacAssignment.query().where({ userId });
+    const assignments = await RbacAssignment.query().where({ userId });
     await RbacAssignment.query().where({ userId }).delete();
-    assignments = assignments.map(assignment => assignment.toJSON());
-    return assignments;
+    return assignments.map(assignment => assignment.toJSON());
   }
 }
 

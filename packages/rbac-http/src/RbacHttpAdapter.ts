@@ -1,29 +1,37 @@
-import RbacMongodbAssignmentAdapter from './adapters/RbacMongodbAssignmentAdapter';
-import RbacMongodbItemAdapter from './adapters/RbacMongodbItemAdapter';
-import RbacMongodbItemChildAdapter from './adapters/RbacMongodbItemChildAdapter';
-import RbacMongodbRuleAdapter from './adapters/RbacMongodbRuleAdapter';
+import RbacHttpAssignmentAdapter from './adapters/RbacHttpAssignmentAdapter';
+import RbacHttpRuleAdapter from './adapters/RbacHttpRuleAdapter';
+import RbacHttpItemAdapter from './adapters/RbacHttpItemAdapter';
+import RbacHttpItemChildAdapter from './adapters/RbacHttpItemChildAdapter';
 
-export default class RbacMongodbAdapter {
-  constructor({}) {
-    this.assignmentAdapter = new RbacMongodbAssignmentAdapter();
-    this.itemAdapter = new RbacMongodbItemAdapter();
-    this.itemChildAdapter = new RbacMongodbItemChildAdapter();
-    this.ruleAdapter = new RbacMongodbRuleAdapter();
+export default class RbacHttpAdapter {
+  private config: any;
+  private assignmentAdapter: any;
+  private itemAdapter: any;
+  private itemChildAdapter: any;
+  private ruleAdapter: any;
+
+  constructor({ rbacHttpConfiguration }) {
+    this.config = rbacHttpConfiguration || {
+      baseUrl: 'http://localhost:4000',
+      headers: {}
+    };
+    this.assignmentAdapter = new RbacHttpAssignmentAdapter(this.config);
+    this.itemAdapter = new RbacHttpItemAdapter(this.config);
+    this.itemChildAdapter = new RbacHttpItemChildAdapter(this.config);
+    this.ruleAdapter = new RbacHttpRuleAdapter(this.config);
   }
 
-  /**
-   * To be used with @brainstaff/injector.
-   * @returns {string[]}
-   */
   get dependencies() {
-    return [];
+    return [
+      'rbacHttpConfiguration'
+    ];
   }
 
-  async store(rbacHierarchy) {
-    await this.assignmentAdapter.store(rbacHierarchy.rbacAssignments);
-    await this.itemAdapter.store(rbacHierarchy.rbacItems);
-    await this.itemChildAdapter.store(rbacHierarchy.rbacItemChildren);
-    await this.ruleAdapter.store(rbacHierarchy.rbacRules);
+  async store(rbacHierachy) {
+    await this.assignmentAdapter.store(rbacHierachy.rbacAssignments);
+    await this.itemAdapter.store(rbacHierachy.rbacItems);
+    await this.itemChildAdapter.store(rbacHierachy.rbacItemChildren);
+    await this.ruleAdapter.store(rbacHierachy.rbacRules);
   }
 
   async load() {

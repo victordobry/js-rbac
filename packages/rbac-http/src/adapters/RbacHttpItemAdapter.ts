@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 export default class RbacHttpItemAdapter {
+  private config: any;
+
   constructor(config) {
     this.config = config;
   }

@@ -18,7 +18,9 @@
         "test": "mocha"
     },
     "devDependencies": {
+        "@rollup/plugin-typescript": "^12.1.1",
         "mocha": "^10.8.2",
-        "rollup": "^4.24.4"
+        "rollup": "^4.24.4",
+        "typescript": "^5.6.3"
     }
 }

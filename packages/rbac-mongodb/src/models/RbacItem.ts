@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const RbacItemSchema = mongoose.Schema({
+const RbacItemSchema = new mongoose.Schema({
   name: {
     type: String,
     unique: true

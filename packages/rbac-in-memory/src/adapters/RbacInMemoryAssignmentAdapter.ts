@@ -1,4 +1,6 @@
 export default class RbacInMemoryAssignmentAdapter {
+  private rbacAssignments: any;
+
   constructor() {
     this.rbacAssignments = [];
   }

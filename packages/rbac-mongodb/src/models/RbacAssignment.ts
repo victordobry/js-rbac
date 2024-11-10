@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const RbacAssignmentSchema = mongoose.Schema({
+const RbacAssignmentSchema = new mongoose.Schema({
   role: {
     type: String,
     ref: 'RbacItem'

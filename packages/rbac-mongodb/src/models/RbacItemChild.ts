@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const RbacItemChildSchema = mongoose.Schema({
+const RbacItemChildSchema = new mongoose.Schema({
   parent: {
     type: String,
     ref: 'RbacItem'

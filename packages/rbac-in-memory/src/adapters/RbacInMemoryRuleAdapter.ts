@@ -1,4 +1,6 @@
 export default class RbacInMemoryRuleAdapter {
+  private rbacRules: any;
+
   constructor() {
     this.rbacRules = [];
   }

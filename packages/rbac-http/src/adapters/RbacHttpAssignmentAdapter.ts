@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 export default class RbacHttpAssignmentAdapter {
+  private config: any;
+
   constructor(config) {
     this.config = config;
   }

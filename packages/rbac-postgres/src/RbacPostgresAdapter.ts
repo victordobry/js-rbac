@@ -1,31 +1,35 @@
-import RbacHttpAssignmentAdapter from './adapters/RbacHttpAssignmentAdapter';
-import RbacHttpRuleAdapter from './adapters/RbacHttpRuleAdapter';
-import RbacHttpItemAdapter from './adapters/RbacHttpItemAdapter';
-import RbacHttpItemChildAdapter from './adapters/RbacHttpItemChildAdapter';
+import RbacPostgresAssignmentAdapter from './adapters/RbacPostgresAssignmentAdapter'
+import RbacPostgresItemAdapter from './adapters/RbacPostgresItemAdapter'
+import RbacPostgresItemChildAdapter from './adapters/RbacPostgresItemChildAdapter'
+import RbacPostgresRuleAdapter from './adapters/RbacPostgresRuleAdapter'
 
-export default class RbacHttpAdapter {
-  constructor({ rbacHttpConfiguration }) {
-    this.config = rbacHttpConfiguration || {
-      baseUrl: 'http://localhost:4000',
-      headers: {}
-    };
-    this.assignmentAdapter = new RbacHttpAssignmentAdapter(this.config);
-    this.itemAdapter = new RbacHttpItemAdapter(this.config);
-    this.itemChildAdapter = new RbacHttpItemChildAdapter(this.config);
-    this.ruleAdapter = new RbacHttpRuleAdapter(this.config);
+import RbacAssignment from './models/RbacAssignment';
+import RbacItem from './models/RbacItem';
+import RbacItemChild from './models/RbacItemChild';
+import RbacRule from './models/RbacRule';
+
+class RbacPostgresAdapter {
+  private assignmentAdapter: any;
+  private itemAdapter: any;
+  private itemChildAdapter: any;
+  private ruleAdapter: any;
+
+  constructor({ knex }) {
+    RbacAssignment.knex(knex);
+    RbacItem.knex(knex);
+    RbacItemChild.knex(knex);
+    RbacRule.knex(knex);
+    this.assignmentAdapter = new RbacPostgresAssignmentAdapter();
+    this.itemAdapter = new RbacPostgresItemAdapter();
+    this.itemChildAdapter = new RbacPostgresItemChildAdapter();
+    this.ruleAdapter = new RbacPostgresRuleAdapter();
   }
 
-  get dependencies() {
-    return [
-      'rbacHttpConfiguration'
-    ];
-  }
-
-  async store(rbacHierachy) {
-    await this.assignmentAdapter.store(rbacHierachy.rbacAssignments);
-    await this.itemAdapter.store(rbacHierachy.rbacItems);
-    await this.itemChildAdapter.store(rbacHierachy.rbacItemChildren);
-    await this.ruleAdapter.store(rbacHierachy.rbacRules);
+  async store(rbacHierarchy) {
+    await this.assignmentAdapter.store(rbacHierarchy.rbacAssignments);
+    await this.itemAdapter.store(rbacHierarchy.rbacItems);
+    await this.itemChildAdapter.store(rbacHierarchy.rbacItemChildren);
+    await this.ruleAdapter.store(rbacHierarchy.rbacRules);
   }
 
   async load() {
@@ -103,3 +107,6 @@ export default class RbacHttpAdapter {
     return await this.ruleAdapter.create(name);
   }
 }
+
+export default RbacPostgresAdapter;
+

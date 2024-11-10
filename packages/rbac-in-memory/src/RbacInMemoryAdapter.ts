@@ -1,30 +1,34 @@
-import RbacPostgresAssignmentAdapter from './adapters/RbacPostgresAssignmentAdapter'
-import RbacPostgresItemAdapter from './adapters/RbacPostgresItemAdapter'
-import RbacPostgresItemChildAdapter from './adapters/RbacPostgresItemChildAdapter'
-import RbacPostgresRuleAdapter from './adapters/RbacPostgresRuleAdapter'
+import RbacInMemoryAssignmentAdapter from './adapters/RbacInMemoryAssignmentAdapter';
+import RbacInMemoryItemAdapter from './adapters/RbacInMemoryItemAdapter';
+import RbacInMemoryItemChildAdapter from './adapters/RbacInMemoryItemChildAdapter';
+import RbacInMemoryRuleAdapter from './adapters/RbacInMemoryRuleAdapter';
 
-import RbacAssignment from './models/RbacAssignment';
-import RbacItem from './models/RbacItem';
-import RbacItemChild from './models/RbacItemChild';
-import RbacRule from './models/RbacRule';
+export default class RbacInMemoryAdapter {
+  private assignmentAdapter: any;
+  private itemAdapter: any;
+  private itemChildAdapter: any;
+  private ruleAdapter: any;
 
-class RbacPostgresAdapter {
-  constructor({ knex }) {
-    RbacAssignment.knex(knex);
-    RbacItem.knex(knex);
-    RbacItemChild.knex(knex);
-    RbacRule.knex(knex);
-    this.assignmentAdapter = new RbacPostgresAssignmentAdapter();
-    this.itemAdapter = new RbacPostgresItemAdapter();
-    this.itemChildAdapter = new RbacPostgresItemChildAdapter();
-    this.ruleAdapter = new RbacPostgresRuleAdapter();
+  constructor() {
+    this.assignmentAdapter = new RbacInMemoryAssignmentAdapter();
+    this.itemAdapter = new RbacInMemoryItemAdapter();
+    this.itemChildAdapter = new RbacInMemoryItemChildAdapter();
+    this.ruleAdapter = new RbacInMemoryRuleAdapter();
+  }
+
+  /**
+   * To be used with @brainstaff/injector.
+   * @returns {string[]}
+   */
+  get dependencies() {
+    return [];
   }
 
   async store(rbacHierarchy) {
-    await this.assignmentAdapter.store(rbacHierarchy.rbacAssignments);
-    await this.itemAdapter.store(rbacHierarchy.rbacItems);
-    await this.itemChildAdapter.store(rbacHierarchy.rbacItemChildren);
-    await this.ruleAdapter.store(rbacHierarchy.rbacRules);
+    await this.assignmentAdapter.store([...rbacHierarchy.rbacAssignments]);
+    await this.itemAdapter.store([...rbacHierarchy.rbacItems]);
+    await this.itemChildAdapter.store([...rbacHierarchy.rbacItemChildren]);
+    await this.ruleAdapter.store([...rbacHierarchy.rbacRules]);
   }
 
   async load() {
@@ -102,6 +106,3 @@ class RbacPostgresAdapter {
     return await this.ruleAdapter.create(name);
   }
 }
-
-export default RbacPostgresAdapter;
-

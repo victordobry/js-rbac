@@ -3,7 +3,7 @@ import RbacRule from '../models/RbacRule';
 class RbacPostgresRuleAdapter {
   async store(rbacRules) {
     await RbacRule.query().delete();
-    const rules = await RbacRule.query().insert(rbacRules);
+    const rules = await RbacRule.query().insert(rbacRules) as any;
     return rules.map(rule => rule.toJSON());
   }
 
