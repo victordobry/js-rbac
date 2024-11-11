@@ -1,15 +1,16 @@
 import assert from 'assert';
+
 import { RbacInMemoryAdapter } from '@brainstaff/rbac-in-memory';
 
-import { RbacManager } from '../src/index.js';
+import { RbacAssignment, RbacItem, RbacItemChild, RbacManager, RbacRule } from '../src/index.js';
 
 const createRbacManager = async () => {
-  const rbacAssignments = [
+  const rbacAssignments: RbacAssignment[] = [
     { userId: 'alexey', role: 'admin' },
     { userId: 'ilya', role: 'manager' }
   ];
 
-  const rbacItems = [
+  const rbacItems: RbacItem[] = [
     { name: 'admin', type: 'role' },
     { name: 'manager', type: 'role' },
     { name: 'user', type: 'role' },
@@ -17,7 +18,7 @@ const createRbacManager = async () => {
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
   ];
 
-  const rbacItemChildren = [
+  const rbacItemChildren: RbacItemChild[] = [
     { parent: 'admin', child: 'manager' },
     { parent: 'manager', child: 'user' },
     { parent: 'user', child: 'updateOwnProfile' },
@@ -25,7 +26,7 @@ const createRbacManager = async () => {
     { parent: 'admin', child: 'updateProfile' }
   ];
 
-  const rbacRules = [
+  const rbacRules: RbacRule[] = [
     { name: 'IsOwnProfile' }
   ];
 

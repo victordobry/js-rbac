@@ -1,5 +1,32 @@
 export type RbacUserId = string;
 
+export interface RbacRule {
+  name: string
+}
+
+export interface RbacItem {
+  type: 'role' | 'permission';
+  name: string;
+  rule?: RbacRule['name'];
+}
+
+export interface RbacItemChild {
+  parent: RbacItem['name'];
+  child: RbacItem['name'];
+}
+
+export interface RbacAssignment {
+  userId: RbacUserId;
+  role: RbacItem['name'];
+}
+
+export interface RbacHierarchy {
+  rbacAssignments: RbacAssignment[];
+  rbacItems: RbacItem[];
+  rbacItemChildren: RbacItemChild[];
+  rbacRules: RbacRule[];
+}
+
 export class RbacManager {
   private rbacCacheAdapter: any;
   private rbacPersistentAdapter: any;
@@ -37,7 +64,7 @@ export class RbacManager {
     }
   }
 
-  async checkAccess(userId: RbacUserId, permissionOrRoleName: any, payload?: any) {
+  async checkAccess(userId: RbacUserId, permissionOrRoleName: RbacItem['name'], payload?: any) {
     const assignments = await this.currentAdapter.findAssignmentsByUserId(userId);
     for (let i = 0; i < assignments.length; i++) {
       if (await this.checkItem(assignments[i].role, permissionOrRoleName, payload)) {
@@ -47,7 +74,7 @@ export class RbacManager {
     return false;
   }
 
-  async checkItem(currentItemName: any, expectedItemName: any, payload: any) {
+  async checkItem(currentItemName: RbacItem['name'], expectedItemName: RbacItem['name'], payload: any) {
     const currentItem = await this.currentAdapter.findItem(currentItemName);
     if (!currentItem) {
       return false;
@@ -76,7 +103,7 @@ export class RbacManager {
     }
   }
 
-  async assign(userId: RbacUserId, role: any) {
+  async assign(userId: RbacUserId, role: RbacItem['name']) {
     const item = await this.currentAdapter.findItem(role);
     if (!item || item.type !== 'role') {
       throw new Error(`No such role ${role}.`);
@@ -91,7 +118,7 @@ export class RbacManager {
     return await this.rbacPersistentAdapter.createAssignment(userId, role);
   }
 
-  async revoke(userId: RbacUserId, role: any) {
+  async revoke(userId: RbacUserId, role: RbacItem['name']) {
     const assignment = await this.currentAdapter.findAssignment(userId, role);
     if (!assignment) {
       throw new Error(`Role "${role}" is not attached to the "${userId}".`);
