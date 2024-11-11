@@ -12,10 +12,9 @@ export class RbacManager {
   }
 
   /**
-   * To be used with @brainstaff/injector.
-   * @returns {string[]}
+   * To be used with `@brainstaff/injector`.
    */
-  get dependencies() {
+  get dependencies(): string[] {
     return [
       'rbacCacheAdapter',
       'rbacPersistentAdapter',
