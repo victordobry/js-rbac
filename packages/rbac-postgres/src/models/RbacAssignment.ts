@@ -1,13 +1,10 @@
-import { RbacUserId } from '@brainstaff/rbac';
-
 import { Model } from 'objection';
 
-interface RbacAssignment {
-  userId: RbacUserId;
-  role: any;
-}
+import { RbacAssignment } from '@brainstaff/rbac';
 
-class RbacAssignment extends Model {
+interface RbacAssignmentModel extends RbacAssignment {}
+
+class RbacAssignmentModel extends Model {
   static get tableName() {
     return 'rbac_assignments';
   }
@@ -17,4 +14,4 @@ class RbacAssignment extends Model {
   }
 }
 
-export default RbacAssignment;
+export default RbacAssignmentModel;

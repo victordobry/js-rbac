@@ -1,10 +1,10 @@
 import { Model } from 'objection';
 
-interface RbacRule {
-  name: any;
-}
+import { RbacRule } from '@brainstaff/rbac';
 
-class RbacRule extends Model {
+interface RbacRuleModel extends RbacRule {}
+
+class RbacRuleModel extends Model {
   static get tableName() {
     return 'rbac_rules';
   }
@@ -14,4 +14,4 @@ class RbacRule extends Model {
   }
 }
 
-export default RbacRule;
+export default RbacRuleModel;

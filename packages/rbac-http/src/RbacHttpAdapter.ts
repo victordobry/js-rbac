@@ -1,11 +1,11 @@
-import { RbacUserId } from '@brainstaff/rbac';
+import { RbacAdapter, RbacHierarchy, RbacItem, RbacRule, RbacUserId } from '@brainstaff/rbac';
 
 import RbacHttpAssignmentAdapter from './adapters/RbacHttpAssignmentAdapter';
 import RbacHttpRuleAdapter from './adapters/RbacHttpRuleAdapter';
 import RbacHttpItemAdapter from './adapters/RbacHttpItemAdapter';
 import RbacHttpItemChildAdapter from './adapters/RbacHttpItemChildAdapter';
 
-export default class RbacHttpAdapter {
+export default class RbacHttpAdapter implements RbacAdapter {
   private config: any;
   private assignmentAdapter: any;
   private itemAdapter: any;
@@ -29,7 +29,7 @@ export default class RbacHttpAdapter {
     ];
   }
 
-  async store(rbacHierachy: any) {
+  async store(rbacHierachy: RbacHierarchy) {
     await this.assignmentAdapter.store(rbacHierachy.rbacAssignments);
     await this.itemAdapter.store(rbacHierachy.rbacItems);
     await this.itemChildAdapter.store(rbacHierachy.rbacItemChildren);
@@ -67,21 +67,21 @@ export default class RbacHttpAdapter {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
-  async findItem(name: any) {
+  async findItem(name: RbacItem['name']) {
     return await this.itemAdapter.find(name);
   }
 
-  async findItemChildrenByParent(name: any) {
+  async findItemChildrenByParent(name: RbacItem['name']) {
     return await this.itemChildAdapter.findByParent(name);
   }
 
   // Core for management
 
-  async createAssignment(userId: RbacUserId, role: any) {
+  async createAssignment(userId: RbacUserId, role: RbacItem['name']) {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId: RbacUserId, role: any) {
+  async findAssignment(userId: RbacUserId, role: RbacItem['name']) {
     return await this.assignmentAdapter.find(userId, role);
   }
 
@@ -89,7 +89,7 @@ export default class RbacHttpAdapter {
     return await this.itemAdapter.findByType('role');
   }
 
-  async deleteAssignment(userId: RbacUserId, role: any) {
+  async deleteAssignment(userId: RbacUserId, role: RbacItem['name']) {
     if (role) {
       return await this.assignmentAdapter.delete(userId, role);
     }
@@ -99,15 +99,15 @@ export default class RbacHttpAdapter {
 
   // Management
 
-  async createItem(name: any, type: any) {
+  async createItem(name: RbacItem['name'], type: RbacItem['type']) {
     return await this.itemAdapter.create(name, type);
   }
 
-  async createItemChild(parent: any, child: any) {
+  async createItemChild(parent: RbacItem['name'], child: RbacItem['name']) {
     return await this.itemChildAdapter.create(parent, child);
   }
 
-  async createRule(name: any) {
+  async createRule(name: RbacRule['name']) {
     return await this.ruleAdapter.create(name);
   }
 }

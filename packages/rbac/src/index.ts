@@ -27,13 +27,42 @@ export interface RbacHierarchy {
   rbacRules: RbacRule[];
 }
 
+export interface RbacAdapter {
+  store(hierarchy: RbacHierarchy): Promise<void>;
+  load(): Promise<RbacHierarchy>;
+  findAllAssignments(): Promise<RbacAssignment[]>;
+  findAllItems(): Promise<RbacItem[]>;
+  findAllItemsChild(): Promise<RbacItemChild[]>;
+  findAllRules(): Promise<RbacRule[]>;
+
+  // Core for checkAccess
+  findAssignmentsByUserId(userId: RbacUserId): Promise<RbacAssignment[]>;
+  findItem(name: RbacItem['name']): Promise<RbacItem>;
+  findItemChildrenByParent(name: RbacItem['name']): Promise<RbacItemChild[]>;
+
+  // Core for management
+  createAssignment(userId: RbacUserId, role: RbacItem['name']): Promise<void>;
+  findAssignment(userId: RbacUserId, role: RbacItem['name']): Promise<RbacAssignment>;
+  findRoles(): Promise<RbacItem[]>;
+  deleteAssignment(userId: RbacUserId, role?: RbacItem['name']): Promise<void>;
+
+  // Management
+  createItem(name: RbacItem['name'], type: RbacItem['type']): Promise<void>;
+  createItemChild(parent: RbacItem['name'], child: RbacItem['name']): Promise<void>;
+  createRule(name: RbacRule['name']): Promise<void>;
+}
+
 export class RbacManager {
-  private rbacCacheAdapter: any;
-  private rbacPersistentAdapter: any;
+  private rbacCacheAdapter: RbacAdapter;
+  private rbacPersistentAdapter: RbacAdapter;
   private rbacRuleFactory: any;
   private isCacheLoaded: any;
 
-  constructor({ rbacCacheAdapter, rbacPersistentAdapter, rbacRuleFactory }: any) {
+  constructor({ rbacCacheAdapter, rbacPersistentAdapter, rbacRuleFactory }: {
+    rbacCacheAdapter: RbacAdapter,
+    rbacPersistentAdapter: RbacAdapter,
+    rbacRuleFactory: any,
+  }) {
     this.rbacCacheAdapter = rbacCacheAdapter;
     this.rbacPersistentAdapter = rbacPersistentAdapter;
     this.rbacRuleFactory = rbacRuleFactory;

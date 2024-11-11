@@ -1,11 +1,10 @@
 import { Model } from 'objection';
 
-interface RbacItemChild {
-  parent: any;
-  child: any;
-}
+import { RbacItemChild } from '@brainstaff/rbac';
 
-class RbacItemChild extends Model {
+interface RbacItemChildModel extends RbacItemChild {}
+
+class RbacItemChildModel extends Model {
   static get tableName() {
     return 'rbac_item_children';
   }
@@ -15,4 +14,4 @@ class RbacItemChild extends Model {
   }
 }
 
-export default RbacItemChild;
+export default RbacItemChildModel;

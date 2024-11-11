@@ -1,19 +1,19 @@
-import RbacRule from '../models/RbacRule';
+import RbacRuleModel from '../models/RbacRule';
 
 export default class RbacMongodbRuleAdapter {
   constructor() {
   }
 
   async store(rbacRules: any[]) {
-    await RbacRule.deleteMany({});
-    return await RbacRule.create(rbacRules);
+    await RbacRuleModel.deleteMany({});
+    return await RbacRuleModel.create(rbacRules);
   }
 
   async load() {
-    return await RbacRule.find({});
+    return await RbacRuleModel.find({});
   }
 
   async create(name: any) {
-    return await RbacRule.create({ name });
+    return await RbacRuleModel.create({ name });
   }
 }
