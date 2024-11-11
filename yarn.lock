@@ -40,7 +40,7 @@ __metadata:
   dependencies:
     "@brainstaff/rbac": "npm:^1.0.0-beta.10"
     "@rollup/plugin-typescript": "npm:^12.1.1"
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.4"
     "@types/express": "npm:^5.0.0"
     "@types/mocha": "npm:^10.0.9"
     "@types/node": "npm:^22.9.0"
@@ -59,7 +59,7 @@ __metadata:
   dependencies:
     "@brainstaff/rbac": "npm:^1.0.0-beta.10"
     "@rollup/plugin-typescript": "npm:^12.1.1"
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.4"
     "@types/mocha": "npm:^10.0.9"
     "@types/node": "npm:^22.9.0"
     mocha: "npm:^10.8.2"
@@ -75,7 +75,7 @@ __metadata:
   dependencies:
     "@brainstaff/rbac": "npm:^1.0.0-beta.10"
     "@rollup/plugin-typescript": "npm:^12.1.1"
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.4"
     "@types/chai": "npm:^5.0.1"
     "@types/mocha": "npm:^10.0.9"
     "@types/node": "npm:^22.9.0"
@@ -96,7 +96,7 @@ __metadata:
   dependencies:
     "@brainstaff/rbac": "npm:^1.0.0-beta.10"
     "@rollup/plugin-typescript": "npm:^12.1.1"
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.4"
     "@types/chai": "npm:^5.0.1"
     "@types/mocha": "npm:^10.0.9"
     "@types/node": "npm:^22.9.0"
@@ -128,7 +128,7 @@ __metadata:
   resolution: "@brainstaff/rbac@workspace:packages/rbac"
   dependencies:
     "@rollup/plugin-typescript": "npm:^12.1.1"
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.4"
     "@types/mocha": "npm:^10.0.9"
     "@types/node": "npm:^22.9.0"
     mocha: "npm:^10.8.2"
@@ -1159,10 +1159,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node18@npm:^18.2.4":
-  version: 18.2.4
-  resolution: "@tsconfig/node18@npm:18.2.4"
-  checksum: 10c0/cdfd17f212660374eb2765cd5907b2252e43cfa2623cd52307a49f004327ef49bbe7d53c78b0aca57f33e9a5cb0d7d2eb5ded9be1235e6212f65c9f0699322b6
+"@tsconfig/node20@npm:^20.1.4":
+  version: 20.1.4
+  resolution: "@tsconfig/node20@npm:20.1.4"
+  checksum: 10c0/239cd6abaceaaffc758e7a9dd3748ec1acfdabd6de28a9a16a3824c21f17ad69a16184870298460345d2fb6f3663d092c21d5b764bef669a179658b4a7eac739
   languageName: node
   linkType: hard
 
