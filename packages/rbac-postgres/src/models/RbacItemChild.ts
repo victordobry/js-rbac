@@ -1,5 +1,10 @@
 import { Model } from 'objection';
 
+interface RbacItemChild {
+  parent: any;
+  child: any;
+}
+
 class RbacItemChild extends Model {
   static get tableName() {
     return 'rbac_item_children';

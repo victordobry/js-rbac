@@ -3,18 +3,18 @@ import axios from 'axios';
 export default class RbacHttpAssignmentAdapter {
   private config: any;
 
-  constructor(config) {
+  constructor(config: any) {
     this.config = config;
   }
 
-  async store(rbacAssignments) {
+  async store(rbacAssignments: any[]) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { rbacAssignments }, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -30,7 +30,7 @@ export default class RbacHttpAssignmentAdapter {
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -39,14 +39,14 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async create(userId, role) {
+  async create(userId: any, role: any) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { userId, role }, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -55,14 +55,14 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async find(userId, role) {
+  async find(userId: any, role: any) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -71,14 +71,14 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async findByUserId(userId) {
+  async findByUserId(userId: any) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -87,14 +87,14 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async delete(userId, role) {
+  async delete(userId: any, role: any) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
@@ -103,14 +103,14 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async deleteByUser(userId) {
+  async deleteByUser(userId: any) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
         headers: this.config.headers,
         withCredentials: this.config.withCredentials,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {

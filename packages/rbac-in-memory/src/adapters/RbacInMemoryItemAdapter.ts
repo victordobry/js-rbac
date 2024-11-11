@@ -1,11 +1,11 @@
 export default class RbacInMemoryItemAdapter {
-  private rbacItems: any;
+  private rbacItems: any[];
 
   constructor() {
     this.rbacItems = [];
   }
 
-  async store(rbacItems) {
+  async store(rbacItems: any) {
     this.rbacItems = rbacItems;
   }
 
@@ -13,18 +13,18 @@ export default class RbacInMemoryItemAdapter {
     return this.rbacItems;
   }
 
-  async create(name, type, rule) {
+  async create(name: any, type: any, rule: any) {
     if (this.rbacItems.find(item => item.name === name)) {
       throw new Error(`Item ${name} already exists.`);
     }
     this.rbacItems.push({ name, type, rule });
   }
 
-  async find(name) {
+  async find(name: any) {
     return this.rbacItems.find(rbacItem => rbacItem.name === name);
   }
 
-  async findByType(type) {
+  async findByType(type: any) {
     return this.rbacItems.filter(rbacItem => rbacItem.type === type);
   }
 }

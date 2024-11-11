@@ -2,12 +2,12 @@ import fs from 'node:fs';
 import { expect } from 'chai';
 import Knex from 'knex';
 
-import { RbacPostgresAssignmentAdapter } from '../dist/index.js';
-import { RbacPostgresItemAdapter } from '../dist/index.js';
-import { RbacPostgresItemChildAdapter } from '../dist/index.js';
-import { RbacPostgresRuleAdapter } from '../dist/index.js';
+import { RbacPostgresAssignmentAdapter } from '../src/index.js';
+import { RbacPostgresItemAdapter } from '../src/index.js';
+import { RbacPostgresItemChildAdapter } from '../src/index.js';
+import { RbacPostgresRuleAdapter } from '../src/index.js';
 
-import { RbacPostgresAdapter } from '../dist/index.js';
+import { RbacPostgresAdapter } from '../src/index.js';
 
 // Initializing connection to test DB
 

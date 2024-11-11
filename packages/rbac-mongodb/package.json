@@ -3,6 +3,7 @@
     "version": "1.0.0-beta.10",
     "description": "RBAC mongodb adapter.",
     "main": "dist/index.js",
+    "types": "src/index.ts",
     "author": "Ilya Lebedev <ilyaleb@gmail.com>",
     "license": "MIT",
     "publishConfig": {
@@ -15,7 +16,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup -c rollup.config.mjs",
-        "test": "mocha -r tsx ./test/test.ts"
+        "test": "mocha -r tsx ./test/test.mts"
     },
     "dependencies": {
         "@brainstaff/rbac": "^1.0.0-beta.10"

@@ -1,9 +1,9 @@
 import RbacAssignment from '../models/RbacAssignment';
 
 class RbacPostgresAssignmentAdapter {
-  async store(rbacAssignments) {
+  async store(rbacAssignments: any[]) {
     await RbacAssignment.query().delete();
-    const assignments = await RbacAssignment.query().insert(rbacAssignments) as any;
+    const assignments = await RbacAssignment.query().insert(rbacAssignments) as unknown as any[];
     return assignments.map(assignment => assignment.toJSON());
   }
 
@@ -12,7 +12,7 @@ class RbacPostgresAssignmentAdapter {
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async create(userId, role) {
+  async create(userId: any, role: any) {
     let assignment = await RbacAssignment.query().findById([userId, role]);
     if (assignment) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
@@ -21,17 +21,17 @@ class RbacPostgresAssignmentAdapter {
     return assignment && assignment.toJSON();
   }
 
-  async find(userId, role) {
+  async find(userId: any, role: any) {
     const assignment = await RbacAssignment.query().findById([userId, role]);
     return assignment && assignment.toJSON();
   }
 
-  async findByUserId(userId) {
+  async findByUserId(userId: any) {
     const assignments = await RbacAssignment.query().where({ userId });
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async delete(userId, role) {
+  async delete(userId: any, role: any) {
     const assignment = await RbacAssignment.query().findById([userId, role]);
     if (!assignment) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
@@ -40,7 +40,7 @@ class RbacPostgresAssignmentAdapter {
     return assignment.toJSON();
   }
 
-  async deleteByUser(userId) {
+  async deleteByUser(userId: any) {
     const assignments = await RbacAssignment.query().where({ userId });
     await RbacAssignment.query().where({ userId }).delete();
     return assignments.map(assignment => assignment.toJSON());

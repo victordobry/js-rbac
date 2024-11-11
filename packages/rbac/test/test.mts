@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { RbacInMemoryAdapter } from '@brainstaff/rbac-in-memory';
 
-import { RbacManager } from '../dist/index.js';
+import { RbacManager } from '../src/index.js';
 
 const createRbacManager = async () => {
   const rbacAssignments = [
@@ -39,10 +39,10 @@ const createRbacManager = async () => {
   });
 
   const rbacRuleFactory = {
-    createRule(name) {
+    createRule(name: any) {
       if (name === 'IsOwnProfile') {
         return {
-          execute: async (payload) => {
+          execute: async (payload: any) => {
             if (payload && payload.user && payload.user.userId && payload.profile && payload.profile.userId) {
               return payload.user.userId === payload.profile.userId;
             }

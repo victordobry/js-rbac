@@ -14,7 +14,7 @@ class RbacPostgresAdapter {
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
-  constructor({ knex }) {
+  constructor({ knex }: any) {
     RbacAssignment.knex(knex);
     RbacItem.knex(knex);
     RbacItemChild.knex(knex);
@@ -25,7 +25,7 @@ class RbacPostgresAdapter {
     this.ruleAdapter = new RbacPostgresRuleAdapter();
   }
 
-  async store(rbacHierarchy) {
+  async store(rbacHierarchy: any) {
     await this.assignmentAdapter.store(rbacHierarchy.rbacAssignments);
     await this.itemAdapter.store(rbacHierarchy.rbacItems);
     await this.itemChildAdapter.store(rbacHierarchy.rbacItemChildren);
@@ -59,25 +59,25 @@ class RbacPostgresAdapter {
 
   // Core for checkAccess
 
-  async findAssignmentsByUserId(userId) {
+  async findAssignmentsByUserId(userId: any) {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
-  async findItem(name) {
+  async findItem(name: any) {
     return await this.itemAdapter.find(name);
   }
 
-  async findItemChildrenByParent(name) {
+  async findItemChildrenByParent(name: any) {
     return await this.itemChildAdapter.findByParent(name);
   }
 
   // Core for management
 
-  async createAssignment(userId, role) {
+  async createAssignment(userId: any, role: any) {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId, role) {
+  async findAssignment(userId: any, role: any) {
     return await this.assignmentAdapter.find(userId, role);
   }
 
@@ -85,7 +85,7 @@ class RbacPostgresAdapter {
     return await this.itemAdapter.findByType('role');
   }
 
-  async deleteAssignment(userId, role) {
+  async deleteAssignment(userId: any, role: any) {
     if (role) {
       return await this.assignmentAdapter.delete(userId, role);
     }
@@ -95,15 +95,15 @@ class RbacPostgresAdapter {
 
   // Management
 
-  async createItem(name, type) {
+  async createItem(name: any, type: any) {
     return await this.itemAdapter.create(name, type);
   }
 
-  async createItemChild(parent, child) {
+  async createItemChild(parent: any, child: any) {
     return await this.itemChildAdapter.create(parent, child);
   }
 
-  async createRule(name) {
+  async createRule(name: any) {
     return await this.ruleAdapter.create(name);
   }
 }

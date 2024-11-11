@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 
-import { RbacMongodbAssignmentAdapter } from '../dist/index.js';
-import { RbacMongodbItemAdapter } from '../dist/index.js';
-import { RbacMongodbItemChildAdapter } from '../dist/index.js';
-import { RbacMongodbRuleAdapter } from '../dist/index.js';
+import { RbacMongodbAssignmentAdapter } from '../src/index.js';
+import { RbacMongodbItemAdapter } from '../src/index.js';
+import { RbacMongodbItemChildAdapter } from '../src/index.js';
+import { RbacMongodbRuleAdapter } from '../src/index.js';
 import mongoose from 'mongoose';
 
 class RbacMongodbConnection{
   private mongodbConfiguration: any;
   private logger: any;
 
-  constructor({mongodbConfiguration, logger}) {
+  constructor({mongodbConfiguration, logger}: any) {
     this.mongodbConfiguration = mongodbConfiguration;
     this.logger = logger;
     mongoose.connect(this.mongodbConfiguration.uri, this.mongodbConfiguration.options);
@@ -40,7 +40,7 @@ const mongodbConfiguration = {
 };
 
 const logger = {
-  info: (message) => console.log(message)
+  info: (message: any) => console.log(message)
 };
 
 const mongooseConnection = new RbacMongodbConnection({ mongodbConfiguration, logger });
@@ -176,7 +176,7 @@ describe('RbacMongodbItemChildAdapter', () => {
     const adapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.store(rbacItemChildren);
     expect(result).to.be.an('array').that.have.length(5);
-    result.forEach((item, index) => expect(item).to.include(rbacItemChildren[index]));
+    result.forEach((item: any, index: any) => expect(item).to.include(rbacItemChildren[index]));
   }).timeout(timeout);
 
   it('should load all child items', async () => {

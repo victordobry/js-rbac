@@ -1,11 +1,11 @@
 import assert from 'assert';
 import express from 'express';
 
-import { RbacHttpAssignmentAdapter } from '../dist/index.js';
-import { RbacHttpItemAdapter } from '../dist/index.js';
-import { RbacHttpItemChildAdapter } from '../dist/index.js';
-import { RbacHttpRuleAdapter } from '../dist/index.js';
-import { RbacHttpAdapter } from '../dist/index.js';
+import { RbacHttpAssignmentAdapter } from '../src/index.js';
+import { RbacHttpItemAdapter } from '../src/index.js';
+import { RbacHttpItemChildAdapter } from '../src/index.js';
+import { RbacHttpRuleAdapter } from '../src/index.js';
+import { RbacHttpAdapter } from '../src/index.js';
 
 describe('RbacHttpAssignmentAdapter', () => {
   const rbacAssignments = [
@@ -16,7 +16,7 @@ describe('RbacHttpAssignmentAdapter', () => {
     baseUrl: 'http://localhost:4001',
     headers: {}
   });
-  let server;
+  let server: any;
 
   before(async () => {
     const app = express();
@@ -94,7 +94,7 @@ describe('RbacHttpAssignmentAdapter', () => {
     const assignment = { userId: 'alexey', role: 'user' };
     try {
       await assignmentAdapter.delete(assignment.userId, assignment.role);
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.message, `Role ${assignment.role} is not assigned to user ${assignment.userId}.`);
     }
   });
@@ -124,7 +124,7 @@ describe('RbacHttpItemAdapter', () => {
     baseUrl: 'http://localhost:4001',
     headers: {}
   });
-  let server;
+  let server: any;
 
   before(async () => {
     const app = express();
@@ -171,7 +171,7 @@ describe('RbacHttpItemAdapter', () => {
     try {
       await itemAdapter.create(item.name, item.type, item.rule);
       assert.fail('Should throw on create.');
-    } catch (error) {
+    } catch (error: any) {
       assert.equal(error.message, `Item ${item.name} already exists.`)
     }
   });
@@ -212,7 +212,7 @@ describe('RbacHttpItemChildAdapter', () => {
     baseUrl: 'http://localhost:4001',
     headers: {}
   });
-  let server;
+  let server: any;
 
   before(async () => {
     const app = express();
@@ -259,7 +259,7 @@ describe('RbacHttpItemChildAdapter', () => {
     try {
       const response = await itemChildAdapter.create(itemChild.parent, itemChild.child);
       assert.fail('Should throw on create.');
-    } catch (error) {
+    } catch (error: any) {
       assert.equal(error.message, `Association of ${itemChild.parent} and ${itemChild.child} already exists.`);
     }
   });
@@ -285,7 +285,7 @@ describe('RbacHttpRuleAdapter', () => {
     baseUrl: 'http://localhost:4001',
     headers: {}
   });
-  let server;
+  let server: any;
 
   before(async () => {
     const app = express();
@@ -328,7 +328,7 @@ describe('RbacHttpRuleAdapter', () => {
     try {
       const response = await ruleAdapter.create(rule.name);
       assert.fail('Should throw on create.');
-    } catch (error) {
+    } catch (error: any) {
       assert.equal(error.message, `Rule ${rule.name} already exists.`);
     }
   });
@@ -368,7 +368,7 @@ describe('RbacHttpAdapter', () => {
       headers: {}
     }
   });
-  let server;
+  let server: any;
 
   before(async () => {
     const app = express();

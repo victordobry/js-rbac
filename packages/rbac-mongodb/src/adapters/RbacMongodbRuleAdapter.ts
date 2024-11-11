@@ -4,7 +4,7 @@ export default class RbacMongodbRuleAdapter {
   constructor() {
   }
 
-  async store(rbacRules) {
+  async store(rbacRules: any[]) {
     await RbacRule.deleteMany({});
     return await RbacRule.create(rbacRules);
   }
@@ -13,7 +13,7 @@ export default class RbacMongodbRuleAdapter {
     return await RbacRule.find({});
   }
 
-  async create(name) {
+  async create(name: any) {
     return await RbacRule.create({ name });
   }
 }

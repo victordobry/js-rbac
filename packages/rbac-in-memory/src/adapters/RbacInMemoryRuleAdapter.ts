@@ -1,11 +1,11 @@
 export default class RbacInMemoryRuleAdapter {
-  private rbacRules: any;
+  private rbacRules: any[];
 
   constructor() {
     this.rbacRules = [];
   }
 
-  async store(rbacRules) {
+  async store(rbacRules: any[]) {
     this.rbacRules = rbacRules;
   }
 
@@ -13,7 +13,7 @@ export default class RbacInMemoryRuleAdapter {
     return this.rbacRules;
   }
 
-  async create(name) {
+  async create(name: any) {
     if (this.rbacRules.find(rule => rule.name === name)) {
       throw new Error(`Rule ${name} already exists.`);
     }

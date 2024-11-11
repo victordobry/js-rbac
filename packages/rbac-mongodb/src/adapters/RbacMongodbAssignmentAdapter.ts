@@ -4,7 +4,7 @@ export default class RbacMongodbAssignmentAdapter {
   constructor() {
   }
 
-  async store(rbacAssignments) {
+  async store(rbacAssignments: any[]) {
     await RbacAssignment.deleteMany({});
     return await RbacAssignment.create(rbacAssignments);
   }
@@ -13,7 +13,7 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.find({});
   }
 
-  async create(userId, role) {
+  async create(userId: any, role: any) {
     const currentRole = await RbacAssignment.findOne({ userId: userId, role: role });
     if (currentRole) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
@@ -22,15 +22,15 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.create({ userId: userId, role: role });
   }
 
-  async find(userId, role) {
+  async find(userId: any, role: any) {
     return await RbacAssignment.findOne({ userId: userId, role: role });
   }
 
-  async findByUserId(userId) {
+  async findByUserId(userId: any) {
     return await RbacAssignment.find({ userId: userId });
   }
 
-  async delete(userId, role) {
+  async delete(userId: any, role: any) {
     const currentRole = await RbacAssignment.findOne({ userId: userId, role: role });
 
     if (!currentRole) {
@@ -40,7 +40,7 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.findByIdAndDelete(currentRole._id);
   }
 
-  async deleteByUser(userId) {
+  async deleteByUser(userId: any) {
     return await RbacAssignment.deleteMany({ userId });
   }
 }

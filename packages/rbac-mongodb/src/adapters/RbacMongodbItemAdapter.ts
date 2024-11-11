@@ -4,7 +4,7 @@ export default class RbacMongodbItemAdapter {
   constructor() {
   }
 
-  async store(rbacItems) {
+  async store(rbacItems: any[]) {
     await RbacItem.deleteMany({});
     return await RbacItem.create(rbacItems);
   }
@@ -13,7 +13,7 @@ export default class RbacMongodbItemAdapter {
     return await RbacItem.find({});
   }
 
-  async create(name, type, rule) {
+  async create(name: any, type: any, rule?: any) {
     const currentItem = await RbacItem.findOne({ name });
     if (currentItem) {
       throw new Error(`Item ${name} already exists.`);
@@ -22,11 +22,11 @@ export default class RbacMongodbItemAdapter {
     return await RbacItem.create({ name, type, rule });
   }
 
-  async find(name) {
+  async find(name: any) {
     return await RbacItem.findOne({ name });
   }
 
-  async findByType(type) {
+  async findByType(type: any) {
     return await RbacItem.find({ type });
   }
 }

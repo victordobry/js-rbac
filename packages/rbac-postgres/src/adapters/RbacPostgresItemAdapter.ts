@@ -1,9 +1,9 @@
 import RbacItem from '../models/RbacItem';
 
 class RbacPostgresItemAdapter {
-  async store(rbacItems) {
+  async store(rbacItems: any[]) {
     await RbacItem.query().delete();
-    const items = await RbacItem.query().insert(rbacItems) as any;
+    const items = await RbacItem.query().insert(rbacItems) as unknown as any[];
     return items.map(assignment => assignment.toJSON());
   }
 
@@ -12,7 +12,7 @@ class RbacPostgresItemAdapter {
     return items.map(assignment => assignment.toJSON());
   }
 
-  async create(name, type, rule) {
+  async create(name: any, type: any, rule?: any) {
     let item = await RbacItem.query().findOne({ name });
     if (item) {
       throw new Error(`Item ${name} already exists.`);
@@ -22,12 +22,12 @@ class RbacPostgresItemAdapter {
     return item && item.toJSON();
   }
 
-  async find(name) {
+  async find(name: any) {
     const item = await RbacItem.query().findById(name);
     return item && item.toJSON();
   }
 
-  async findByType(type) {
+  async findByType(type: any) {
     const items = await RbacItem.query().where({ type });
     return items.map(item => item.toJSON());
   }
