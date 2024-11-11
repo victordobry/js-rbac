@@ -1,3 +1,5 @@
+import { RbacUserId } from "@brainstaff/rbac";
+
 export default class RbacInMemoryAssignmentAdapter {
   public rbacAssignments: any[];
 
@@ -13,22 +15,22 @@ export default class RbacInMemoryAssignmentAdapter {
     return this.rbacAssignments;
   }
 
-  async create(userId: any, role: any) {
+  async create(userId: RbacUserId, role: any) {
     if (this.rbacAssignments.find(assignment => assignment.userId === userId && assignment.role === role)) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
     }
     this.rbacAssignments.push({ userId, role });
   }
 
-  async find(userId: any, role: any) {
+  async find(userId: RbacUserId, role: any) {
     return this.rbacAssignments.find(assignment => assignment.userId === userId && assignment.role === role);
   }
 
-  async findByUserId(userId: any) {
+  async findByUserId(userId: RbacUserId) {
     return this.rbacAssignments.filter(assignment => assignment.userId === userId);
   }
 
-  async delete(userId: any, role: any) {
+  async delete(userId: RbacUserId, role: any) {
     const assignmentIndex = this.rbacAssignments.findIndex(assignment => assignment.userId === userId && assignment.role === role);
     if (assignmentIndex !== -1) {
       this.rbacAssignments.splice(assignmentIndex, 1);
@@ -37,7 +39,7 @@ export default class RbacInMemoryAssignmentAdapter {
     }
   }
 
-  async deleteByUser(userId: any) {
+  async deleteByUser(userId: RbacUserId) {
     let i = this.rbacAssignments.length;
     while (i--) {
       if (this.rbacAssignments[i].userId === userId) {

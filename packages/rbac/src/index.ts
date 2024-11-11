@@ -1,3 +1,5 @@
+export type RbacUserId = string;
+
 export class RbacManager {
   private rbacCacheAdapter: any;
   private rbacPersistentAdapter: any;
@@ -35,7 +37,7 @@ export class RbacManager {
     }
   }
 
-  async checkAccess(userId: any, permissionOrRoleName: any, payload?: any) {
+  async checkAccess(userId: RbacUserId, permissionOrRoleName: any, payload?: any) {
     const assignments = await this.currentAdapter.findAssignmentsByUserId(userId);
     for (let i = 0; i < assignments.length; i++) {
       if (await this.checkItem(assignments[i].role, permissionOrRoleName, payload)) {
@@ -74,7 +76,7 @@ export class RbacManager {
     }
   }
 
-  async assign(userId: any, role: any) {
+  async assign(userId: RbacUserId, role: any) {
     const item = await this.currentAdapter.findItem(role);
     if (!item || item.type !== 'role') {
       throw new Error(`No such role ${role}.`);
@@ -89,7 +91,7 @@ export class RbacManager {
     return await this.rbacPersistentAdapter.createAssignment(userId, role);
   }
 
-  async revoke(userId: any, role: any) {
+  async revoke(userId: RbacUserId, role: any) {
     const assignment = await this.currentAdapter.findAssignment(userId, role);
     if (!assignment) {
       throw new Error(`Role "${role}" is not attached to the "${userId}".`);
@@ -100,14 +102,14 @@ export class RbacManager {
     return await this.rbacPersistentAdapter.deleteAssignment(userId, role);
   }
 
-  async revokeAll(userId: any) {
+  async revokeAll(userId: RbacUserId) {
     if (this.isCacheLoaded) {
       await this.rbacCacheAdapter.deleteAssignment(userId);
     }
     return await this.rbacPersistentAdapter.deleteAssignment(userId);
   }
 
-  async fetchUserAssignments(userId: any) {
+  async fetchUserAssignments(userId: RbacUserId) {
     return await this.currentAdapter.findAssignmentsByUserId(userId);
   }
 

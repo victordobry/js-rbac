@@ -1,3 +1,5 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import RbacPostgresAssignmentAdapter from './adapters/RbacPostgresAssignmentAdapter'
 import RbacPostgresItemAdapter from './adapters/RbacPostgresItemAdapter'
 import RbacPostgresItemChildAdapter from './adapters/RbacPostgresItemChildAdapter'
@@ -59,7 +61,7 @@ class RbacPostgresAdapter {
 
   // Core for checkAccess
 
-  async findAssignmentsByUserId(userId: any) {
+  async findAssignmentsByUserId(userId: RbacUserId) {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
@@ -73,11 +75,11 @@ class RbacPostgresAdapter {
 
   // Core for management
 
-  async createAssignment(userId: any, role: any) {
+  async createAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId: any, role: any) {
+  async findAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.find(userId, role);
   }
 
@@ -85,7 +87,7 @@ class RbacPostgresAdapter {
     return await this.itemAdapter.findByType('role');
   }
 
-  async deleteAssignment(userId: any, role: any) {
+  async deleteAssignment(userId: RbacUserId, role: any) {
     if (role) {
       return await this.assignmentAdapter.delete(userId, role);
     }

@@ -1,3 +1,5 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import RbacMongodbAssignmentAdapter from './adapters/RbacMongodbAssignmentAdapter';
 import RbacMongodbItemAdapter from './adapters/RbacMongodbItemAdapter';
 import RbacMongodbItemChildAdapter from './adapters/RbacMongodbItemChildAdapter';
@@ -57,7 +59,7 @@ export default class RbacMongodbAdapter {
 
   // Core for checkAccess
 
-  async findAssignmentsByUserId(userId: any) {
+  async findAssignmentsByUserId(userId: RbacUserId) {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
@@ -71,11 +73,11 @@ export default class RbacMongodbAdapter {
 
   // Core for management
 
-  async createAssignment(userId: any, role: any) {
+  async createAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId: any, role: any) {
+  async findAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.find(userId, role);
   }
 
@@ -83,7 +85,7 @@ export default class RbacMongodbAdapter {
     return await this.itemAdapter.findByType('role');
   }
 
-  async deleteAssignment(userId: any, role: any) {
+  async deleteAssignment(userId: RbacUserId, role: any) {
     if (role) {
       return await this.assignmentAdapter.delete(userId, role);
     }

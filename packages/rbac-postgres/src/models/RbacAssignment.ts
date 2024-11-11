@@ -1,7 +1,9 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import { Model } from 'objection';
 
 interface RbacAssignment {
-  userId: any;
+  userId: RbacUserId;
   role: any;
 }
 

@@ -1,3 +1,5 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import RbacAssignment from '../models/RbacAssignment';
 
 export default class RbacMongodbAssignmentAdapter {
@@ -13,7 +15,7 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.find({});
   }
 
-  async create(userId: any, role: any) {
+  async create(userId: RbacUserId, role: any) {
     const currentRole = await RbacAssignment.findOne({ userId: userId, role: role });
     if (currentRole) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
@@ -22,15 +24,15 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.create({ userId: userId, role: role });
   }
 
-  async find(userId: any, role: any) {
+  async find(userId: RbacUserId, role: any) {
     return await RbacAssignment.findOne({ userId: userId, role: role });
   }
 
-  async findByUserId(userId: any) {
+  async findByUserId(userId: RbacUserId) {
     return await RbacAssignment.find({ userId: userId });
   }
 
-  async delete(userId: any, role: any) {
+  async delete(userId: RbacUserId, role: any) {
     const currentRole = await RbacAssignment.findOne({ userId: userId, role: role });
 
     if (!currentRole) {
@@ -40,7 +42,7 @@ export default class RbacMongodbAssignmentAdapter {
     return await RbacAssignment.findByIdAndDelete(currentRole._id);
   }
 
-  async deleteByUser(userId: any) {
+  async deleteByUser(userId: RbacUserId) {
     return await RbacAssignment.deleteMany({ userId });
   }
 }

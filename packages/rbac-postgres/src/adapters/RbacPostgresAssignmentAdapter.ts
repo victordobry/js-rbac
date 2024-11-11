@@ -1,3 +1,5 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import RbacAssignment from '../models/RbacAssignment';
 
 class RbacPostgresAssignmentAdapter {
@@ -12,7 +14,7 @@ class RbacPostgresAssignmentAdapter {
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async create(userId: any, role: any) {
+  async create(userId: RbacUserId, role: any) {
     let assignment = await RbacAssignment.query().findById([userId, role]);
     if (assignment) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
@@ -21,17 +23,17 @@ class RbacPostgresAssignmentAdapter {
     return assignment && assignment.toJSON();
   }
 
-  async find(userId: any, role: any) {
+  async find(userId: RbacUserId, role: any) {
     const assignment = await RbacAssignment.query().findById([userId, role]);
     return assignment && assignment.toJSON();
   }
 
-  async findByUserId(userId: any) {
+  async findByUserId(userId: RbacUserId) {
     const assignments = await RbacAssignment.query().where({ userId });
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async delete(userId: any, role: any) {
+  async delete(userId: RbacUserId, role: any) {
     const assignment = await RbacAssignment.query().findById([userId, role]);
     if (!assignment) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
@@ -40,7 +42,7 @@ class RbacPostgresAssignmentAdapter {
     return assignment.toJSON();
   }
 
-  async deleteByUser(userId: any) {
+  async deleteByUser(userId: RbacUserId) {
     const assignments = await RbacAssignment.query().where({ userId });
     await RbacAssignment.query().where({ userId }).delete();
     return assignments.map(assignment => assignment.toJSON());

@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { RbacUserId } from '@brainstaff/rbac';
+
 export default class RbacHttpAssignmentAdapter {
   private config: any;
 
@@ -39,7 +41,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async create(userId: any, role: any) {
+  async create(userId: RbacUserId, role: any) {
     try {
       const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { userId, role }, {
         headers: this.config.headers,
@@ -55,7 +57,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async find(userId: any, role: any) {
+  async find(userId: RbacUserId, role: any) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
         headers: this.config.headers,
@@ -71,7 +73,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async findByUserId(userId: any) {
+  async findByUserId(userId: RbacUserId) {
     try {
       const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
         headers: this.config.headers,
@@ -87,7 +89,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async delete(userId: any, role: any) {
+  async delete(userId: RbacUserId, role: any) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
         headers: this.config.headers,
@@ -103,7 +105,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async deleteByUser(userId: any) {
+  async deleteByUser(userId: RbacUserId) {
     try {
       const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
         headers: this.config.headers,

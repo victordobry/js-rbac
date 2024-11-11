@@ -1,3 +1,5 @@
+import { RbacUserId } from '@brainstaff/rbac';
+
 import RbacHttpAssignmentAdapter from './adapters/RbacHttpAssignmentAdapter';
 import RbacHttpRuleAdapter from './adapters/RbacHttpRuleAdapter';
 import RbacHttpItemAdapter from './adapters/RbacHttpItemAdapter';
@@ -61,7 +63,7 @@ export default class RbacHttpAdapter {
 
   // Core for checkAccess
 
-  async findAssignmentsByUserId(userId: any) {
+  async findAssignmentsByUserId(userId: RbacUserId) {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
@@ -75,11 +77,11 @@ export default class RbacHttpAdapter {
 
   // Core for management
 
-  async createAssignment(userId: any, role: any) {
+  async createAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId: any, role: any) {
+  async findAssignment(userId: RbacUserId, role: any) {
     return await this.assignmentAdapter.find(userId, role);
   }
 
@@ -87,7 +89,7 @@ export default class RbacHttpAdapter {
     return await this.itemAdapter.findByType('role');
   }
 
-  async deleteAssignment(userId: any, role: any) {
+  async deleteAssignment(userId: RbacUserId, role: any) {
     if (role) {
       return await this.assignmentAdapter.delete(userId, role);
     }
