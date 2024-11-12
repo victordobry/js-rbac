@@ -4,6 +4,16 @@ export interface RbacRule {
   name: string
 }
 
+export type RbacRulePayload = any;
+
+export interface RbacRuleInstance {
+  execute: (payload?: RbacRulePayload) => Promise<boolean>;
+}
+
+export interface RbacRuleFactory {
+  createRule: (name: RbacRule['name']) => RbacRuleInstance;
+}
+
 export interface RbacItem {
   type: 'role' | 'permission';
   name: string;
@@ -55,13 +65,13 @@ export interface RbacAdapter {
 export class RbacManager {
   private rbacCacheAdapter: RbacAdapter;
   private rbacPersistentAdapter: RbacAdapter;
-  private rbacRuleFactory: any;
+  private rbacRuleFactory: RbacRuleFactory;
   private isCacheLoaded: any;
 
   constructor({ rbacCacheAdapter, rbacPersistentAdapter, rbacRuleFactory }: {
     rbacCacheAdapter: RbacAdapter,
     rbacPersistentAdapter: RbacAdapter,
-    rbacRuleFactory: any,
+    rbacRuleFactory: RbacRuleFactory,
   }) {
     this.rbacCacheAdapter = rbacCacheAdapter;
     this.rbacPersistentAdapter = rbacPersistentAdapter;
@@ -93,7 +103,7 @@ export class RbacManager {
     }
   }
 
-  async checkAccess(userId: RbacUserId, permissionOrRoleName: RbacItem['name'], payload?: any) {
+  async checkAccess(userId: RbacUserId, permissionOrRoleName: RbacItem['name'], payload?: RbacRulePayload) {
     const assignments = await this.currentAdapter.findAssignmentsByUserId(userId);
     for (let i = 0; i < assignments.length; i++) {
       if (await this.checkItem(assignments[i].role, permissionOrRoleName, payload)) {
@@ -103,7 +113,7 @@ export class RbacManager {
     return false;
   }
 
-  async checkItem(currentItemName: RbacItem['name'], expectedItemName: RbacItem['name'], payload: any) {
+  async checkItem(currentItemName: RbacItem['name'], expectedItemName: RbacItem['name'], payload?: RbacRulePayload) {
     const currentItem = await this.currentAdapter.findItem(currentItemName);
     if (!currentItem) {
       return false;

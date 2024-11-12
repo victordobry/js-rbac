@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import { RbacInMemoryAdapter } from '@brainstaff/rbac-in-memory';
 
-import { RbacAssignment, RbacItem, RbacItemChild, RbacManager, RbacRule } from '../src/index.js';
+import { RbacAssignment, RbacItem, RbacItemChild, RbacManager, RbacRule, RbacRuleFactory } from '../src/index.js';
 
 const createRbacManager = async () => {
   const rbacAssignments: RbacAssignment[] = [
@@ -39,17 +39,20 @@ const createRbacManager = async () => {
     rbacRules
   });
 
-  const rbacRuleFactory = {
-    createRule(name: any) {
-      if (name === 'IsOwnProfile') {
-        return {
-          execute: async (payload: any) => {
-            if (payload && payload.user && payload.user.userId && payload.profile && payload.profile.userId) {
-              return payload.user.userId === payload.profile.userId;
+  const rbacRuleFactory: RbacRuleFactory = {
+    createRule(name) {
+      switch(name) {
+        case 'IsOwnProfile':
+          return {
+            execute: async (payload) => {
+              if (payload && payload.user && payload.user.userId && payload.profile && payload.profile.userId) {
+                return payload.user.userId === payload.profile.userId;
+              }
+              return false;
             }
-            return false;
-          }
-        }
+          };
+        default:
+          throw new Error(`Unexpected rule name: ${name}`);
       }
     }
   };
