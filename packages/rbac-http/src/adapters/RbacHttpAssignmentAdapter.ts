@@ -1,20 +1,19 @@
-import axios from 'axios';
+import {AxiosInstance} from 'axios';
 
 import { RbacUserId } from '@brainstaff/rbac';
 
-export default class RbacHttpAssignmentAdapter {
-  private config: any;
+import { RbacHttpConfig } from '../RbacHttpAdapter';
 
-  constructor(config: any) {
-    this.config = config;
+export default class RbacHttpAssignmentAdapter {
+  private client: AxiosInstance;
+
+  constructor({ client }: RbacHttpConfig) {
+    this.client = client;
   }
 
   async store(rbacAssignments: any[]) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { rbacAssignments }, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.post(`/rbac/assignments`, { rbacAssignments });
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -27,10 +26,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async load() {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/assignments`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.get(`/rbac/assignments`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -43,10 +39,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async create(userId: RbacUserId, role: any) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/assignments`, { userId, role }, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.post(`/rbac/assignments`, { userId, role });
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -59,10 +52,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async find(userId: RbacUserId, role: any) {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.get(`/rbac/assignments/${userId}/${role}`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -75,10 +65,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async findByUserId(userId: RbacUserId) {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.get(`/rbac/assignments/${userId}`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -91,10 +78,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async delete(userId: RbacUserId, role: any) {
     try {
-      const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}/${role}`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.delete(`/rbac/assignments/${userId}/${role}`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -107,10 +91,7 @@ export default class RbacHttpAssignmentAdapter {
 
   async deleteByUser(userId: RbacUserId) {
     try {
-      const response = await axios.delete(`${this.config.baseUrl}/rbac/assignments/${userId}`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.delete(`/rbac/assignments/${userId}`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {

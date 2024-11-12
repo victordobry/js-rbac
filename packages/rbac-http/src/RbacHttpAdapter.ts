@@ -1,3 +1,5 @@
+import { AxiosInstance } from 'axios';
+
 import { RbacAdapter, RbacHierarchy, RbacItem, RbacRule, RbacUserId } from '@brainstaff/rbac';
 
 import RbacHttpAssignmentAdapter from './adapters/RbacHttpAssignmentAdapter';
@@ -5,27 +7,29 @@ import RbacHttpRuleAdapter from './adapters/RbacHttpRuleAdapter';
 import RbacHttpItemAdapter from './adapters/RbacHttpItemAdapter';
 import RbacHttpItemChildAdapter from './adapters/RbacHttpItemChildAdapter';
 
+export interface RbacHttpConfig {
+  client: AxiosInstance;
+}
+
 export default class RbacHttpAdapter implements RbacAdapter {
-  private config: any;
   private assignmentAdapter: any;
   private itemAdapter: any;
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
-  constructor({ rbacHttpConfiguration }: any) {
-    this.config = rbacHttpConfiguration || {
-      baseUrl: 'http://localhost:4000',
-      headers: {}
-    };
-    this.assignmentAdapter = new RbacHttpAssignmentAdapter(this.config);
-    this.itemAdapter = new RbacHttpItemAdapter(this.config);
-    this.itemChildAdapter = new RbacHttpItemChildAdapter(this.config);
-    this.ruleAdapter = new RbacHttpRuleAdapter(this.config);
+  constructor(config: RbacHttpConfig) {
+    this.assignmentAdapter = new RbacHttpAssignmentAdapter(config);
+    this.itemAdapter = new RbacHttpItemAdapter(config);
+    this.itemChildAdapter = new RbacHttpItemChildAdapter(config);
+    this.ruleAdapter = new RbacHttpRuleAdapter(config);
   }
 
+  /**
+   * To be used with `@brainstaff/injector`.
+   */
   get dependencies() {
     return [
-      'rbacHttpConfiguration'
+      'client'
     ];
   }
 

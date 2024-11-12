@@ -1,3 +1,5 @@
+import { Knex } from 'knex';
+
 import { RbacAdapter, RbacHierarchy, RbacItem, RbacRule, RbacUserId } from '@brainstaff/rbac';
 
 import RbacPostgresAssignmentAdapter from './adapters/RbacPostgresAssignmentAdapter'
@@ -5,26 +7,21 @@ import RbacPostgresItemAdapter from './adapters/RbacPostgresItemAdapter'
 import RbacPostgresItemChildAdapter from './adapters/RbacPostgresItemChildAdapter'
 import RbacPostgresRuleAdapter from './adapters/RbacPostgresRuleAdapter'
 
-import RbacAssignmentModel from './models/RbacAssignment';
-import RbacItemModel from './models/RbacItem';
-import RbacItemChildModel from './models/RbacItemChild';
-import RbacRuleModel from './models/RbacRule';
+export type RbacPostgresConfig = {
+  client: Knex;
+}
 
-class RbacPostgresAdapter implements RbacAdapter {
+export default class RbacPostgresAdapter implements RbacAdapter {
   private assignmentAdapter: any;
   private itemAdapter: any;
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
-  constructor({ knex }: any) {
-    RbacAssignmentModel.knex(knex);
-    RbacItemModel.knex(knex);
-    RbacItemChildModel.knex(knex);
-    RbacRuleModel.knex(knex);
-    this.assignmentAdapter = new RbacPostgresAssignmentAdapter();
-    this.itemAdapter = new RbacPostgresItemAdapter();
-    this.itemChildAdapter = new RbacPostgresItemChildAdapter();
-    this.ruleAdapter = new RbacPostgresRuleAdapter();
+  constructor(config: RbacPostgresConfig) {
+    this.assignmentAdapter = new RbacPostgresAssignmentAdapter(config);
+    this.itemAdapter = new RbacPostgresItemAdapter(config);
+    this.itemChildAdapter = new RbacPostgresItemChildAdapter(config);
+    this.ruleAdapter = new RbacPostgresRuleAdapter(config);
   }
 
   async store(rbacHierarchy: RbacHierarchy) {
@@ -108,6 +105,3 @@ class RbacPostgresAdapter implements RbacAdapter {
     return await this.ruleAdapter.create(name);
   }
 }
-
-export default RbacPostgresAdapter;
-

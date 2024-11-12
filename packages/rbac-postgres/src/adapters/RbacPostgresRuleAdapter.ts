@@ -1,23 +1,28 @@
-import RbacRule from '../models/RbacRule';
+import { RbacPostgresConfig } from '../RbacPostgresAdapter';
+import RbacRuleModel from '../models/RbacRule';
 
 class RbacPostgresRuleAdapter {
+  constructor({ client }: RbacPostgresConfig) {
+    RbacRuleModel.knex(client);
+  }
+
   async store(rbacRules: any[]) {
-    await RbacRule.query().delete();
-    const rules = await RbacRule.query().insert(rbacRules) as unknown as any[];
+    await RbacRuleModel.query().delete();
+    const rules = await RbacRuleModel.query().insert(rbacRules) as unknown as any[];
     return rules.map(rule => rule.toJSON());
   }
 
   async load() {
-    const rules = await RbacRule.query();
+    const rules = await RbacRuleModel.query();
     return rules.map(rule => rule.toJSON());
   }
 
   async create(name: any) {
-    let rule = await RbacRule.query().findById(name);
+    let rule = await RbacRuleModel.query().findById(name);
     if (rule) {
       throw new Error(`Rule ${name} already exists.`);
     }
-    rule = await RbacRule.query().insert({ name });
+    rule = await RbacRuleModel.query().insert({ name });
     return rule && rule.toJSON();
   }
 }

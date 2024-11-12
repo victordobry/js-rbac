@@ -1,50 +1,55 @@
 import { RbacUserId } from '@brainstaff/rbac';
 
-import RbacAssignment from '../models/RbacAssignment';
+import { RbacPostgresConfig } from '../RbacPostgresAdapter';
+import RbacAssignmentModel from '../models/RbacAssignment';
 
 class RbacPostgresAssignmentAdapter {
+  constructor({ client }: RbacPostgresConfig) {
+    RbacAssignmentModel.knex(client);
+  }
+
   async store(rbacAssignments: any[]) {
-    await RbacAssignment.query().delete();
-    const assignments = await RbacAssignment.query().insert(rbacAssignments) as unknown as any[];
+    await RbacAssignmentModel.query().delete();
+    const assignments = await RbacAssignmentModel.query().insert(rbacAssignments) as unknown as any[];
     return assignments.map(assignment => assignment.toJSON());
   }
 
   async load() {
-    const assignments = await RbacAssignment.query();
+    const assignments = await RbacAssignmentModel.query();
     return assignments.map(assignment => assignment.toJSON());
   }
 
   async create(userId: RbacUserId, role: any) {
-    let assignment = await RbacAssignment.query().findById([userId, role]);
+    let assignment = await RbacAssignmentModel.query().findById([userId, role]);
     if (assignment) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
     }
-    assignment = await RbacAssignment.query().insert({ userId: userId, role: role });
+    assignment = await RbacAssignmentModel.query().insert({ userId: userId, role: role });
     return assignment && assignment.toJSON();
   }
 
   async find(userId: RbacUserId, role: any) {
-    const assignment = await RbacAssignment.query().findById([userId, role]);
+    const assignment = await RbacAssignmentModel.query().findById([userId, role]);
     return assignment && assignment.toJSON();
   }
 
   async findByUserId(userId: RbacUserId) {
-    const assignments = await RbacAssignment.query().where({ userId });
+    const assignments = await RbacAssignmentModel.query().where({ userId });
     return assignments.map(assignment => assignment.toJSON());
   }
 
   async delete(userId: RbacUserId, role: any) {
-    const assignment = await RbacAssignment.query().findById([userId, role]);
+    const assignment = await RbacAssignmentModel.query().findById([userId, role]);
     if (!assignment) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
     }
-    await RbacAssignment.query().deleteById([userId, role]);
+    await RbacAssignmentModel.query().deleteById([userId, role]);
     return assignment.toJSON();
   }
 
   async deleteByUser(userId: RbacUserId) {
-    const assignments = await RbacAssignment.query().where({ userId });
-    await RbacAssignment.query().where({ userId }).delete();
+    const assignments = await RbacAssignmentModel.query().where({ userId });
+    await RbacAssignmentModel.query().where({ userId }).delete();
     return assignments.map(assignment => assignment.toJSON());
   }
 }

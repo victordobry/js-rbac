@@ -11,7 +11,7 @@ export default class RbacMongodbAdapter implements RbacAdapter {
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
-  constructor({}) {
+  constructor() {
     this.assignmentAdapter = new RbacMongodbAssignmentAdapter();
     this.itemAdapter = new RbacMongodbItemAdapter();
     this.itemChildAdapter = new RbacMongodbItemChildAdapter();

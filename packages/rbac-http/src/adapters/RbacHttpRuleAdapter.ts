@@ -1,18 +1,16 @@
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
+import { RbacHttpConfig } from '../RbacHttpAdapter';
 
 export default class RbacHttpRuleAdapter {
-  private config: any;
+  private client: AxiosInstance;
 
-  constructor(config: any) {
-    this.config = config;
+  constructor({ client }: RbacHttpConfig) {
+    this.client = client;
   }
 
   async store(rbacRules: any[]) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { rbacRules }, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.post(`/rbac/rules`, { rbacRules });
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -25,10 +23,7 @@ export default class RbacHttpRuleAdapter {
 
   async load() {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/rbac/rules`, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.get(`/rbac/rules`);
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {
@@ -41,10 +36,7 @@ export default class RbacHttpRuleAdapter {
 
   async create(name: any) {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/rbac/rules`, { name }, {
-        headers: this.config.headers,
-        withCredentials: this.config.withCredentials,
-      });
+      const response = await this.client.post(`/rbac/rules`, { name });
       return response.data;
     } catch (error: any) {
       if (error.response.data.message) {

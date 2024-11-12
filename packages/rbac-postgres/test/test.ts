@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import Knex from 'knex';
+import knex from 'knex';
 
 import { RbacPostgresAssignmentAdapter } from '../src/index.js';
 import { RbacPostgresItemAdapter } from '../src/index.js';
@@ -10,7 +10,7 @@ import { RbacPostgresAdapter } from '../src/index.js';
 
 // Initializing connection to test DB
 
-let knex = Knex({
+let client = knex({
   client: 'pg',
   connection: {
     host: '127.0.0.1',
@@ -25,10 +25,10 @@ let expect: Chai.ExpectStatic;
 before(async () => {
   const chai = await import('chai');
   expect = chai.expect;
-  await knex.raw(`DROP DATABASE IF EXISTS rbac_postgres_test`);
-  await knex.raw(`CREATE DATABASE rbac_postgres_test`);
-  await knex.destroy();
-  knex = Knex({
+  await client.raw(`DROP DATABASE IF EXISTS rbac_postgres_test`);
+  await client.raw(`CREATE DATABASE rbac_postgres_test`);
+  await client.destroy();
+  client = knex({
     client: 'pg',
     connection: {
       host: '127.0.0.1',
@@ -37,13 +37,15 @@ before(async () => {
       database: 'rbac_postgres_test'
     }
   });
-  await knex.raw(fs.readFileSync('./data/tables.sql', 'utf-8'));
-  new RbacPostgresAdapter({ knex });
+  await client.raw(fs.readFileSync('./data/tables.sql', 'utf-8'));
+  new RbacPostgresAdapter({ client });
 });
 
-after(() => knex.destroy());
+after(() => client.destroy());
 
-describe('RbacPostgresItemAdapter', () => {
+describe('RbacPostgresItemAdapter', async () => {
+  const { expect } = await import('chai');
+
   const rbacItems = [
     { name: 'admin', type: 'role' },
     { name: 'manager', type: 'role' },
@@ -56,14 +58,14 @@ describe('RbacPostgresItemAdapter', () => {
   const timeout = 3000;
 
   it('should store many items', async () => {
-    const adapter = new RbacPostgresItemAdapter();
+    const adapter = new RbacPostgresItemAdapter({ client });
     const result = await adapter.store(rbacItems);
     expect(result).to.be.an('array').that.have.length(5);
     result.forEach((item, index) => expect(item).to.include(rbacItems[index]));
   }).timeout(timeout);
 
   it('should load all items', async () => {
-    const adapter = new RbacPostgresItemAdapter();
+    const adapter = new RbacPostgresItemAdapter({ client });
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
     const members: any[] = [];
@@ -72,7 +74,7 @@ describe('RbacPostgresItemAdapter', () => {
   }).timeout(timeout);
 
   it('should load all roles', async () => {
-    const adapter = new RbacPostgresItemAdapter();
+    const adapter = new RbacPostgresItemAdapter({ client });
     const result = await adapter.findByType('role');
     expect(result).to.be.an('array').that.have.length(3);
     const members: any[] = [];
@@ -86,19 +88,21 @@ describe('RbacPostgresItemAdapter', () => {
   }).timeout(timeout);
 
   it('should create single item', async () => {
-    const adapter = new RbacPostgresItemAdapter();
+    const adapter = new RbacPostgresItemAdapter({ client });
     const result = await adapter.create(rbacItem.name, rbacItem.type);
     expect(result).to.be.an('object').that.include(rbacItem);
   }).timeout(timeout);
 
   it('should find single item by name', async () => {
-    const adapter = new RbacPostgresItemAdapter();
+    const adapter = new RbacPostgresItemAdapter({ client });
     const result = await adapter.find(rbacItem.name);
     expect(result).to.be.an('object').that.include(rbacItem);
   }).timeout(timeout);
 });
 
-describe('RbacPostgresAssignmentAdapter', () => {
+describe('RbacPostgresAssignmentAdapter', async () => {
+  const { expect } = await import('chai');
+
   const rbacAssignments: any[] = [];
   const rbacAssignmet: any = {};
 
@@ -112,7 +116,7 @@ describe('RbacPostgresAssignmentAdapter', () => {
       role: 'manager'
     });
 
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.store(rbacAssignments);
 
     expect(result).to.be.an('array').that.have.length(2);
@@ -121,7 +125,7 @@ describe('RbacPostgresAssignmentAdapter', () => {
   }).timeout(timeout);
 
   it('should load all assignment', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
     const members: any[] = [];
@@ -130,26 +134,26 @@ describe('RbacPostgresAssignmentAdapter', () => {
   }).timeout(timeout);
 
   it('should create single assignment', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.create(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should find single assignments', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.find(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should find all assignments by user', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.findByUserId(rbacAssignmet.userId);
     expect(result).to.be.an('array').that.have.length(1);
     expect(result[0]).to.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should delete single assignments', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.delete(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
     const remainData = await adapter.load();
@@ -157,7 +161,7 @@ describe('RbacPostgresAssignmentAdapter', () => {
   }).timeout(timeout);
 
   it('should delete all assignments by user', async () => {
-    const adapter = new RbacPostgresAssignmentAdapter();
+    const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.deleteByUser(rbacAssignments[0].userId);
     expect(result).to.be.an('array').that.deep.include(rbacAssignments[0]);
     const remainData = await adapter.load();
@@ -165,7 +169,9 @@ describe('RbacPostgresAssignmentAdapter', () => {
   }).timeout(timeout);
 });
 
-describe('RbacPostgresItemChildAdapter', () => {
+describe('RbacPostgresItemChildAdapter', async () => {
+  const { expect } = await import('chai');
+
   const timeout = 3000;
 
   const rbacItemChildren = [
@@ -178,14 +184,14 @@ describe('RbacPostgresItemChildAdapter', () => {
   const rbacItemChild = { parent: 'manager', child: 'region manager' };
 
   it('should store many children items', async () => {
-    const adapter = new RbacPostgresItemChildAdapter();
+    const adapter = new RbacPostgresItemChildAdapter({ client });
     const result = await adapter.store(rbacItemChildren);
     expect(result).to.be.an('array').that.have.length(5);
     result.forEach((item, index) => expect(item).to.include(rbacItemChildren[index]));
   }).timeout(timeout);
 
   it('should load all child items', async () => {
-    const adapter = new RbacPostgresItemChildAdapter();
+    const adapter = new RbacPostgresItemChildAdapter({ client });
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
     const members: any[] = [];
@@ -194,19 +200,21 @@ describe('RbacPostgresItemChildAdapter', () => {
   }).timeout(timeout);
 
   it('should create single child item', async () => {
-    const adapter = new RbacPostgresItemChildAdapter();
+    const adapter = new RbacPostgresItemChildAdapter({ client });
     const result = await adapter.create(rbacItemChild.parent, rbacItemChild.child);
     expect(result).to.be.an('object').that.include(rbacItemChild);
   }).timeout(timeout);
 
   it('should find all children item by parent', async () => {
-    const adapter = new RbacPostgresItemChildAdapter();
+    const adapter = new RbacPostgresItemChildAdapter({ client });
     const result = await adapter.findByParent(rbacItemChildren[0].parent);
     expect(result).to.be.an('array').that.have.length(2);
   }).timeout(timeout);
 });
 
-describe('RbacPostgresRuleAdapter', () => {
+describe('RbacPostgresRuleAdapter', async () => {
+  const { expect } = await import('chai');
+
   const rbacRules = [
     { name: 'IsOwnProfile' },
     { name: 'IsOwnDocument' }
@@ -216,14 +224,14 @@ describe('RbacPostgresRuleAdapter', () => {
   const timeout = 3000;
 
   it('should store many rules', async () => {
-    const adapter = new RbacPostgresRuleAdapter();
+    const adapter = new RbacPostgresRuleAdapter({ client });
     const result = await adapter.store(rbacRules);
     expect(result).to.be.an('array').that.have.length(2);
     result.forEach((item, index) => expect(item).to.include(rbacRules[index]));
   }).timeout(timeout);
 
   it('should load all rules', async () => {
-    const adapter = new RbacPostgresRuleAdapter();
+    const adapter = new RbacPostgresRuleAdapter({ client });
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
     const members: any[] = [];
@@ -232,7 +240,7 @@ describe('RbacPostgresRuleAdapter', () => {
   }).timeout(timeout);
 
   it('should create single rule', async () => {
-    const adapter = new RbacPostgresRuleAdapter();
+    const adapter = new RbacPostgresRuleAdapter({ client });
     const result = await adapter.create(rbacRule.name);
     expect(result).to.be.an('object').that.include(rbacRule);
   }).timeout(timeout);

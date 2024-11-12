@@ -1,5 +1,6 @@
 import assert from 'assert';
 import express from 'express';
+import axios from 'axios';
 
 import { RbacHttpAssignmentAdapter } from '../src/index.js';
 import { RbacHttpItemAdapter } from '../src/index.js';
@@ -7,15 +8,17 @@ import { RbacHttpItemChildAdapter } from '../src/index.js';
 import { RbacHttpRuleAdapter } from '../src/index.js';
 import { RbacHttpAdapter } from '../src/index.js';
 
+const client = axios.create({
+  baseURL: 'http://localhost:4001',
+  headers: {}
+});
+
 describe('RbacHttpAssignmentAdapter', () => {
   const rbacAssignments = [
     { userId: 'alexey', role: 'admin' },
     { userId: 'ilya', role: 'manager' }
   ];
-  const assignmentAdapter = new RbacHttpAssignmentAdapter({
-    baseUrl: 'http://localhost:4001',
-    headers: {}
-  });
+  const assignmentAdapter = new RbacHttpAssignmentAdapter({ client });
   let server: any;
 
   before(async () => {
@@ -120,10 +123,7 @@ describe('RbacHttpItemAdapter', () => {
     { name: 'updateProfile', type: 'permission' },
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
   ];
-  const itemAdapter = new RbacHttpItemAdapter({
-    baseUrl: 'http://localhost:4001',
-    headers: {}
-  });
+  const itemAdapter = new RbacHttpItemAdapter({ client });
   let server: any;
 
   before(async () => {
@@ -208,10 +208,7 @@ describe('RbacHttpItemChildAdapter', () => {
     { parent: 'updateOwnProfile', child: 'updateProfile' },
     { parent: 'admin', child: 'updateProfile' }
   ];
-  const itemChildAdapter = new RbacHttpItemChildAdapter({
-    baseUrl: 'http://localhost:4001',
-    headers: {}
-  });
+  const itemChildAdapter = new RbacHttpItemChildAdapter({ client });
   let server: any;
 
   before(async () => {
@@ -281,10 +278,7 @@ describe('RbacHttpRuleAdapter', () => {
   const rbacRules = [
     { name: 'IsOwnProfile' }
   ];
-  const ruleAdapter = new RbacHttpRuleAdapter({
-    baseUrl: 'http://localhost:4001',
-    headers: {}
-  });
+  const ruleAdapter = new RbacHttpRuleAdapter({ client });
   let server: any;
 
   before(async () => {
@@ -362,12 +356,7 @@ describe('RbacHttpAdapter', () => {
   const rbacRules = [
     { name: 'IsOwnProfile' }
   ];
-  const rbacAdapter = new RbacHttpAdapter({
-    rbacHttpConfiguration: {
-      baseUrl: 'http://localhost:4001',
-      headers: {}
-    }
-  });
+  const rbacAdapter = new RbacHttpAdapter({ client });
   let server: any;
 
   before(async () => {
