@@ -24,15 +24,6 @@ export default class RbacHttpAdapter implements RbacAdapter {
     this.ruleAdapter = new RbacHttpRuleAdapter(config);
   }
 
-  /**
-   * To be used with `@brainstaff/injector`.
-   */
-  get dependencies() {
-    return [
-      'client'
-    ];
-  }
-
   async store(rbacHierachy: RbacHierarchy) {
     await this.assignmentAdapter.store(rbacHierachy.rbacAssignments);
     await this.itemAdapter.store(rbacHierachy.rbacItems);

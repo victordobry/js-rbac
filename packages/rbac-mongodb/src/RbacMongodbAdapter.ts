@@ -18,13 +18,6 @@ export default class RbacMongodbAdapter implements RbacAdapter {
     this.ruleAdapter = new RbacMongodbRuleAdapter();
   }
 
-  /**
-   * To be used with `@brainstaff/injector`.
-   */
-  get dependencies(): string[] {
-    return [];
-  }
-
   async store(rbacHierarchy: RbacHierarchy) {
     await this.assignmentAdapter.store(rbacHierarchy.rbacAssignments);
     await this.itemAdapter.store(rbacHierarchy.rbacItems);

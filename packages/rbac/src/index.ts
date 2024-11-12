@@ -79,17 +79,6 @@ export class RbacManager {
     this.isCacheLoaded = false;
   }
 
-  /**
-   * To be used with `@brainstaff/injector`.
-   */
-  get dependencies(): string[] {
-    return [
-      'rbacCacheAdapter',
-      'rbacPersistentAdapter',
-      'rbacRuleFactory'
-    ];
-  }
-
   async loadCache() {
     this.rbacCacheAdapter.store(await this.rbacPersistentAdapter.load());
     this.isCacheLoaded = true;
