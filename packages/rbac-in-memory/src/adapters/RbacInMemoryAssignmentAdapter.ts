@@ -8,7 +8,7 @@ export default class RbacInMemoryAssignmentAdapter {
   }
 
   async store(rbacAssignments: any[]) {
-    this.rbacAssignments = rbacAssignments;
+    this.rbacAssignments = [...rbacAssignments];
   }
 
   async load() {

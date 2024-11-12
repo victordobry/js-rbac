@@ -6,7 +6,7 @@ export default class RbacInMemoryRuleAdapter {
   }
 
   async store(rbacRules: any[]) {
-    this.rbacRules = rbacRules;
+    this.rbacRules = [...rbacRules];
   }
 
   async load() {

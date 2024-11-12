@@ -6,7 +6,7 @@ export default class RbacInMemoryItemAdapter {
   }
 
   async store(rbacItems: any) {
-    this.rbacItems = rbacItems;
+    this.rbacItems = [...rbacItems];
   }
 
   async load() {
