@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import { RbacMongodbAssignmentAdapter } from '../src/index.js';
 import { RbacMongodbItemAdapter } from '../src/index.js';
 import { RbacMongodbItemChildAdapter } from '../src/index.js';
@@ -45,6 +43,13 @@ const logger = {
 
 const mongooseConnection = new RbacMongodbConnection({ mongodbConfiguration, logger });
 const timeout = 10000;
+
+let expect: Chai.ExpectStatic;
+
+before(async () => {
+  const chai = await import('chai');
+  expect = chai.expect;
+});
 
 after(() => mongooseConnection.disconnect());
 

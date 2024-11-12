@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import { expect } from 'chai';
 import Knex from 'knex';
 
 import { RbacPostgresAssignmentAdapter } from '../src/index.js';
@@ -21,7 +20,11 @@ let knex = Knex({
   }
 });
 
+let expect: Chai.ExpectStatic;
+
 before(async () => {
+  const chai = await import('chai');
+  expect = chai.expect;
   await knex.raw(`DROP DATABASE IF EXISTS rbac_postgres_test`);
   await knex.raw(`CREATE DATABASE rbac_postgres_test`);
   await knex.destroy();

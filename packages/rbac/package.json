@@ -16,7 +16,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup -c rollup.config.mjs",
-        "test": "mocha -r tsx ./test/test.mts"
+        "test": "mocha -r tsx ./test/test.ts"
     },
     "devDependencies": {
         "@rollup/plugin-typescript": "^12.1.1",

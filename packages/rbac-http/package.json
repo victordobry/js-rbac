@@ -16,7 +16,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup -c rollup.config.mjs",
-        "test": "mocha -r tsx ./test/test.mts"
+        "test": "mocha -r tsx ./test/test.ts"
     },
     "dependencies": {
         "@brainstaff/rbac": "^1.0.0-beta.10",
