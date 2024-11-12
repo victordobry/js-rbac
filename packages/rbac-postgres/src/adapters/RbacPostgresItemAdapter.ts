@@ -1,9 +1,12 @@
-import { RbacPostgresConfig } from '../RbacPostgresAdapter';
+import { Knex } from 'knex';
+
 import RbacItemModel from '../models/RbacItem';
 
 class RbacPostgresItemAdapter {
-  constructor({ client }: RbacPostgresConfig) {
-    RbacItemModel.knex(client);
+  constructor(deps: {
+    client: Knex
+  }) {
+    RbacItemModel.knex(deps.client);
   }
 
   async store(rbacItems: any[]) {

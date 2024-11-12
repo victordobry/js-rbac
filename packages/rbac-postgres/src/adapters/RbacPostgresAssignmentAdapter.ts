@@ -1,11 +1,14 @@
+import { Knex } from 'knex';
+
 import { RbacUserId } from '@brainstaff/rbac';
 
-import { RbacPostgresConfig } from '../RbacPostgresAdapter';
 import RbacAssignmentModel from '../models/RbacAssignment';
 
 class RbacPostgresAssignmentAdapter {
-  constructor({ client }: RbacPostgresConfig) {
-    RbacAssignmentModel.knex(client);
+  constructor(deps: {
+    client: Knex
+  }) {
+    RbacAssignmentModel.knex(deps.client);
   }
 
   async store(rbacAssignments: any[]) {

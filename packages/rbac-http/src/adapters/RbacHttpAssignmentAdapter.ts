@@ -2,13 +2,13 @@ import {AxiosInstance} from 'axios';
 
 import { RbacUserId } from '@brainstaff/rbac';
 
-import { RbacHttpConfig } from '../RbacHttpAdapter';
-
 export default class RbacHttpAssignmentAdapter {
   private client: AxiosInstance;
 
-  constructor({ client }: RbacHttpConfig) {
-    this.client = client;
+  constructor(deps: {
+    client: AxiosInstance;
+  }) {
+    this.client = deps.client;
   }
 
   async store(rbacAssignments: any[]) {

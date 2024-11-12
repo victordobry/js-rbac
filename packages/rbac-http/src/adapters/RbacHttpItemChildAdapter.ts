@@ -1,11 +1,12 @@
 import { AxiosInstance } from 'axios';
-import { RbacHttpConfig } from '../RbacHttpAdapter';
 
 export default class RbacHttpItemChildAdapter {
   private client: AxiosInstance;
 
-  constructor({ client }: RbacHttpConfig) {
-    this.client = client;
+  constructor(deps: {
+    client: AxiosInstance;
+  }) {
+    this.client = deps.client;
   }
 
   async store(rbacItemChildren: any[]) {

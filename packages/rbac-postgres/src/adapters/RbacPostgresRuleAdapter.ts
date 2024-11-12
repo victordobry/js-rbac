@@ -1,9 +1,12 @@
-import { RbacPostgresConfig } from '../RbacPostgresAdapter';
+import { Knex } from 'knex';
+
 import RbacRuleModel from '../models/RbacRule';
 
 class RbacPostgresRuleAdapter {
-  constructor({ client }: RbacPostgresConfig) {
-    RbacRuleModel.knex(client);
+  constructor(deps: {
+    client: Knex
+  }) {
+    RbacRuleModel.knex(deps.client);
   }
 
   async store(rbacRules: any[]) {

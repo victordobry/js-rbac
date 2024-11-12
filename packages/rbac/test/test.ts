@@ -1,8 +1,8 @@
 import assert from 'assert';
 
-import { RbacInMemoryAdapter } from '@brainstaff/rbac-in-memory';
+import { RbacInMemoryAssignmentAdapter, RbacInMemoryItemAdapter, RbacInMemoryItemChildAdapter, RbacInMemoryRuleAdapter } from '@brainstaff/rbac-in-memory'
 
-import { RbacAssignment, RbacItem, RbacItemChild, RbacManager, RbacRule, RbacRuleFactory } from '../src/index.js';
+import { RbacAdapter, RbacAssignment, RbacItem, RbacItemChild, RbacManager, RbacRule, RbacRuleFactory } from '../src/index.js';
 
 const createRbacManager = async () => {
   const rbacAssignments: RbacAssignment[] = [
@@ -30,8 +30,18 @@ const createRbacManager = async () => {
     { name: 'IsOwnProfile' }
   ];
 
-  const rbacCacheAdapter = new RbacInMemoryAdapter();
-  const rbacPersistentAdapter = new RbacInMemoryAdapter();
+  const rbacCacheAdapter = new RbacAdapter({
+    assignmentAdapter: new RbacInMemoryAssignmentAdapter(),
+    itemAdapter: new RbacInMemoryItemAdapter(),
+    itemChildAdapter: new RbacInMemoryItemChildAdapter(),
+    ruleAdapter: new RbacInMemoryRuleAdapter(),
+  });
+  const rbacPersistentAdapter = new RbacAdapter({
+    assignmentAdapter: new RbacInMemoryAssignmentAdapter(),
+    itemAdapter: new RbacInMemoryItemAdapter(),
+    itemChildAdapter: new RbacInMemoryItemChildAdapter(),
+    ruleAdapter: new RbacInMemoryRuleAdapter(),
+  });
   await rbacPersistentAdapter.store({
     rbacAssignments,
     rbacItems,

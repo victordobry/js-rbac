@@ -6,8 +6,6 @@ import { RbacPostgresItemAdapter } from '../src/index.js';
 import { RbacPostgresItemChildAdapter } from '../src/index.js';
 import { RbacPostgresRuleAdapter } from '../src/index.js';
 
-import { RbacPostgresAdapter } from '../src/index.js';
-
 // Initializing connection to test DB
 
 let client = knex({
@@ -38,7 +36,6 @@ before(async () => {
     }
   });
   await client.raw(fs.readFileSync('./data/tables.sql', 'utf-8'));
-  new RbacPostgresAdapter({ client });
 });
 
 after(() => client.destroy());

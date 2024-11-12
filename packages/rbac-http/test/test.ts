@@ -2,11 +2,12 @@ import assert from 'assert';
 import express from 'express';
 import axios from 'axios';
 
+import { RbacAdapter } from '@brainstaff/rbac';
+
 import { RbacHttpAssignmentAdapter } from '../src/index.js';
 import { RbacHttpItemAdapter } from '../src/index.js';
 import { RbacHttpItemChildAdapter } from '../src/index.js';
 import { RbacHttpRuleAdapter } from '../src/index.js';
-import { RbacHttpAdapter } from '../src/index.js';
 
 const client = axios.create({
   baseURL: 'http://localhost:4001',
@@ -356,7 +357,12 @@ describe('RbacHttpAdapter', () => {
   const rbacRules = [
     { name: 'IsOwnProfile' }
   ];
-  const rbacAdapter = new RbacHttpAdapter({ client });
+  const rbacAdapter = new RbacAdapter({
+    assignmentAdapter: new RbacHttpAssignmentAdapter({ client }),
+    itemAdapter: new RbacHttpItemAdapter({ client }),
+    itemChildAdapter: new RbacHttpItemChildAdapter({ client }),
+    ruleAdapter: new RbacHttpRuleAdapter({ client }),
+   });
   let server: any;
 
   before(async () => {
