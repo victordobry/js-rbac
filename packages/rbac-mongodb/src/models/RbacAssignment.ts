@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 
-const RbacAssignmentSchema = new mongoose.Schema({
+import { RbacAssignment } from '@brainstaff/rbac';
+
+const RbacAssignmentSchema = new mongoose.Schema<RbacAssignment>({
+  userId: {
+    type: String
+  },
   role: {
     type: String,
     ref: 'RbacItem'
-  },
-  userId: {
-    type: String
   }
 });
 

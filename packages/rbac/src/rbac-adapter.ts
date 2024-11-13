@@ -2,39 +2,32 @@ import { RbacAssignment, RbacItem, RbacItemChild, RbacRule, RbacUserId } from ".
 
 export interface RbacAssignmentAdapter {
   store: (assignments: RbacAssignment[]) => Promise<any>;
-  load: () => Promise<any>;
+  load: () => Promise<RbacAssignment[]>;
   create: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
-  find: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
-  findByUserId: (userId: RbacUserId) => Promise<any>;
+  find: (userId: RbacUserId, role: RbacItem['name']) => Promise<RbacAssignment | null | undefined>;
+  findByUserId: (userId: RbacUserId) => Promise<RbacAssignment[]>;
   delete: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
   deleteByUser: (userId: RbacUserId) => Promise<any>;
 }
 
 export interface RbacItemAdapter {
   store: (items: RbacItem[]) => Promise<any>;
-  load: () => Promise<any>;
+  load: () => Promise<RbacItem[]>;
   create: (name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) => Promise<any>;
-  find: (name: RbacItem['name']) => Promise<any>;
-  findByType: (type: RbacItem['type']) => Promise<any>;
+  find: (name: RbacItem['name']) => Promise<RbacItem | null | undefined>;
+  findByType: (type: RbacItem['type']) => Promise<RbacItem[]>;
 }
 
 export interface RbacItemChildAdapter {
   store: (itemChildren: RbacItemChild[]) => Promise<any>;
-  load: () => Promise<any>;
+  load: () => Promise<RbacItemChild[]>;
   create: (parent: RbacItem['name'], child: RbacItem['name']) => Promise<any>;
-  findByParent: (name: RbacItem['name']) => Promise<any>;
-}
-
-export interface RbacItemChildAdapter {
-  store: (itemChildren: RbacItemChild[]) => Promise<any>;
-  load: () => Promise<any>;
-  create: (parent: RbacItem['name'], child: RbacItem['name']) => Promise<any>;
-  findByParent: (name: RbacItem['name']) => Promise<any>;
+  findByParent: (name: RbacItem['name']) => Promise<RbacItemChild[]>;
 }
 
 export interface RbacRuleAdapter {
   store: (rules: RbacRule[]) => Promise<any>;
-  load: () => Promise<any>;
+  load: () => Promise<RbacRule[]>;
   create: (name: RbacRule['name']) => Promise<any>;
 }
 
@@ -101,7 +94,7 @@ export class RbacAdapter {
     return await this.assignmentAdapter.findByUserId(userId);
   }
 
-  async findItem(name: RbacItem['name']): Promise<RbacItem> {
+  async findItem(name: RbacItem['name']): Promise<RbacItem | null | undefined> {
     return await this.itemAdapter.find(name);
   }
 
@@ -115,7 +108,7 @@ export class RbacAdapter {
     return await this.assignmentAdapter.create(userId, role);
   }
 
-  async findAssignment(userId: RbacUserId, role: RbacItem['name']): Promise<RbacAssignment> {
+  async findAssignment(userId: RbacUserId, role: RbacItem['name']): Promise<RbacAssignment | null | undefined> {
     return await this.assignmentAdapter.find(userId, role);
   }
 

@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
-const RbacItemChildSchema = new mongoose.Schema({
+import { RbacItemChild } from '@brainstaff/rbac';
+
+const RbacItemChildSchema = new mongoose.Schema<RbacItemChild>({
   parent: {
     type: String,
     ref: 'RbacItem'
