@@ -1,4 +1,6 @@
-import assert from 'assert';
+import http from 'node:http';
+import assert from 'node:assert';
+
 import express from 'express';
 import axios from 'axios';
 
@@ -20,7 +22,7 @@ describe('RbacHttpAssignmentAdapter', () => {
     { userId: 'ilya', role: 'manager' }
   ];
   const assignmentAdapter = new RbacHttpAssignmentAdapter({ client });
-  let server: any;
+  let server: http.Server;
 
   before(async () => {
     const app = express();
@@ -125,7 +127,7 @@ describe('RbacHttpItemAdapter', () => {
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
   ];
   const itemAdapter = new RbacHttpItemAdapter({ client });
-  let server: any;
+  let server: http.Server;
 
   before(async () => {
     const app = express();
@@ -210,7 +212,7 @@ describe('RbacHttpItemChildAdapter', () => {
     { parent: 'admin', child: 'updateProfile' }
   ];
   const itemChildAdapter = new RbacHttpItemChildAdapter({ client });
-  let server: any;
+  let server: http.Server;
 
   before(async () => {
     const app = express();
@@ -280,7 +282,7 @@ describe('RbacHttpRuleAdapter', () => {
     { name: 'IsOwnProfile' }
   ];
   const ruleAdapter = new RbacHttpRuleAdapter({ client });
-  let server: any;
+  let server: http.Server;
 
   before(async () => {
     const app = express();
@@ -363,7 +365,7 @@ describe('RbacHttpAdapter', () => {
     itemChildAdapter: new RbacHttpItemChildAdapter({ client }),
     ruleAdapter: new RbacHttpRuleAdapter({ client }),
    });
-  let server: any;
+  let server: http.Server;
 
   before(async () => {
     const app = express();

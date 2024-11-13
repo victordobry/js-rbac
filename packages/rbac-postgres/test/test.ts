@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import knex from 'knex';
 
-import { RbacItem } from '@brainstaff/rbac';
+import { RbacAssignment, RbacItem } from '@brainstaff/rbac';
 
 import { RbacPostgresAssignmentAdapter } from '../src/index.js';
 import { RbacPostgresItemAdapter } from '../src/index.js';
@@ -103,22 +103,20 @@ describe('RbacPostgresItemAdapter', async () => {
 describe('RbacPostgresAssignmentAdapter', async () => {
   const { expect } = await import('chai');
 
-  const rbacAssignments: any[] = [];
-  const rbacAssignmet: any = {};
-
   const timeout = 2000;
 
-  it('should store many assignments', async () => {
-    rbacAssignments.push({ userId: 'user1', role: 'admin' });
-    rbacAssignments.push({ userId: 'user2', role: 'manager' });
-    Object.assign(rbacAssignmet, {
-      userId: 'user3',
-      role: 'manager'
-    });
+  const rbacAssignments: RbacAssignment[] = [
+    { userId: 'user1', role: 'admin' },
+    { userId: 'user2', role: 'manager' },
+  ];
+  const rbacAssignmet: RbacAssignment = {
+    userId: 'user3',
+    role: 'manager',
+  };
 
+  it('should store many assignments', async () => {
     const adapter = new RbacPostgresAssignmentAdapter({ client });
     const result = await adapter.store(rbacAssignments);
-
     expect(result).to.be.an('array').that.have.length(2);
     expect(result[0]).to.include(rbacAssignments[0]);
     expect(result[1]).to.include(rbacAssignments[1]);

@@ -7,15 +7,18 @@ import { RbacMongodbItemAdapter } from '../src/index.js';
 import { RbacMongodbItemChildAdapter } from '../src/index.js';
 import { RbacMongodbRuleAdapter } from '../src/index.js';
 
-class RbacMongodbConnection{
-  private mongodbConfiguration: any;
-  private logger: any;
+interface Logger {
+  info: (message: string) => void;
+}
 
-  constructor({mongodbConfiguration, logger}: any) {
-    this.mongodbConfiguration = mongodbConfiguration;
-    this.logger = logger;
-    mongoose.connect(this.mongodbConfiguration.uri, this.mongodbConfiguration.options);
-
+class MongooseConnection {
+  private logger: Logger;
+  
+  constructor(uri: string, deps: {
+    logger: Logger,
+  }) {
+    this.logger = deps.logger;
+    mongoose.connect(uri);
     mongoose.connection.on('reconnectFailed', () => {
       this.logger.info('Mongoose reconnection failed.');
     });
@@ -31,20 +34,17 @@ class RbacMongodbConnection{
     });
   }
 
-  disconnect(){
+  disconnect() {
     mongoose.disconnect();
   }
 }
 
-const mongodbConfiguration = {
-  uri: 'mongodb://localhost:27017/rbac-test'
-};
+const mongooseConnection = new MongooseConnection('mongodb://localhost:27017/rbac-test', {
+  logger: {
+    info: (message: string) => console.log(message),
+  },
+});
 
-const logger = {
-  info: (message: any) => console.log(message)
-};
-
-const mongooseConnection = new RbacMongodbConnection({ mongodbConfiguration, logger });
 const timeout = 10000;
 
 let expect: Chai.ExpectStatic;
