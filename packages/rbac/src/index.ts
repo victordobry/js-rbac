@@ -11,6 +11,7 @@ export {
 export {
   RbacAssignmentAdapter,
   RbacItemAdapter,
+  RbacItemChildAdapter,
   RbacAdapter,
 } from "./rbac-adapter";
 export { RbacManager } from "./rbac-manager";

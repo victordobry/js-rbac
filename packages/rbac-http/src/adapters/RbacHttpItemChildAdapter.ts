@@ -1,6 +1,8 @@
 import { AxiosInstance } from 'axios';
 
-export default class RbacHttpItemChildAdapter {
+import { RbacItem, RbacItemChild, RbacItemChildAdapter } from '@brainstaff/rbac';
+
+export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
   private client: AxiosInstance;
 
   constructor(deps: {
@@ -9,7 +11,7 @@ export default class RbacHttpItemChildAdapter {
     this.client = deps.client;
   }
 
-  async store(rbacItemChildren: any[]) {
+  async store(rbacItemChildren: RbacItemChild[]) {
     try {
       const response = await this.client.post(`/rbac/item-children`, { rbacItemChildren });
       return response.data;
@@ -35,7 +37,7 @@ export default class RbacHttpItemChildAdapter {
     }
   }
 
-  async create(parent: any, child: any) {
+  async create(parent: RbacItem['name'], child: RbacItem['name']) {
     try {
       const response = await this.client.post(`/rbac/item-children`, { parent, child });
       return response.data;
@@ -48,7 +50,7 @@ export default class RbacHttpItemChildAdapter {
     }
   }
 
-  async findByParent(parent: any) {
+  async findByParent(parent: RbacItem['name']) {
     try {
       const response = await this.client.get(`/rbac/item-children/${parent}`);
       return response.data;

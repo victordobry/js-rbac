@@ -1,11 +1,9 @@
-export default class RbacInMemoryItemChildAdapter {
-  private rbacItemChildren: any[];
+import { RbacItem, RbacItemChild, RbacItemChildAdapter } from "@brainstaff/rbac";
 
-  constructor() {
-    this.rbacItemChildren = [];
-  }
+export default class RbacInMemoryItemChildAdapter implements RbacItemChildAdapter {
+  private rbacItemChildren: RbacItemChild[] = [];
 
-  async store(rbacItemChildren: any) {
+  async store(rbacItemChildren: RbacItemChild[]) {
     this.rbacItemChildren = [...rbacItemChildren];
   }
 
@@ -13,14 +11,14 @@ export default class RbacInMemoryItemChildAdapter {
     return this.rbacItemChildren;
   }
 
-  async create(parent: any, child: any) {
+  async create(parent: RbacItem['name'], child: RbacItem['name']) {
     if (this.rbacItemChildren.find(itemChild => itemChild.parent === parent && itemChild.child === child)) {
       throw new Error(`Association of ${parent} and ${child} already exists.`);
     }
     this.rbacItemChildren.push({ parent, child });
   }
 
-  async findByParent(parent: any) {
+  async findByParent(parent: RbacItem['name']) {
     return this.rbacItemChildren.filter(rbacItemChild => rbacItemChild.parent === parent);
   }
 }

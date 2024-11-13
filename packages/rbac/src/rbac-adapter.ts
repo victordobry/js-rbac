@@ -18,6 +18,13 @@ export interface RbacItemAdapter {
   findByType: (type: RbacItem['type']) => Promise<any>;
 }
 
+export interface RbacItemChildAdapter {
+  store: (itemChildren: RbacItemChild[]) => Promise<any>;
+  load: () => Promise<any>;
+  create: (parent: RbacItem['name'], child: RbacItem['name']) => Promise<any>;
+  findByParent: (name: RbacItem['name']) => Promise<any>;
+}
+
 interface RbacHierarchy {
   rbacAssignments: RbacAssignment[];
   rbacItems: RbacItem[];
@@ -28,13 +35,13 @@ interface RbacHierarchy {
 export class RbacAdapter {
   private assignmentAdapter: RbacAssignmentAdapter;
   private itemAdapter: RbacItemAdapter;
-  private itemChildAdapter: any;
+  private itemChildAdapter: RbacItemChildAdapter;
   private ruleAdapter: any;
 
   constructor(deps: {
     assignmentAdapter: RbacAssignmentAdapter,
     itemAdapter: RbacItemAdapter,
-    itemChildAdapter: any,
+    itemChildAdapter: RbacItemChildAdapter,
     ruleAdapter: any,
   }) {
     this.assignmentAdapter = deps.assignmentAdapter;
