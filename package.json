@@ -11,6 +11,7 @@
     "url": "https://github.com/brainstaff/js-rbac.git"
   },
   "scripts": {
+    "check": "lerna run check",
     "clean": "lerna run clean",
     "build": "lerna run build",
     "test": "lerna run test",
