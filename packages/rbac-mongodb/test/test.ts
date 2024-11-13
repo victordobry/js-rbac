@@ -1,8 +1,11 @@
+import mongoose from 'mongoose';
+
+import { RbacItem } from '@brainstaff/rbac';
+
 import { RbacMongodbAssignmentAdapter } from '../src/index.js';
 import { RbacMongodbItemAdapter } from '../src/index.js';
 import { RbacMongodbItemChildAdapter } from '../src/index.js';
 import { RbacMongodbRuleAdapter } from '../src/index.js';
-import mongoose from 'mongoose';
 
 class RbacMongodbConnection{
   private mongodbConfiguration: any;
@@ -115,14 +118,14 @@ describe('RbacMongodbAssignmentAdapter', () => {
 });
 
 describe('RbacMongodbItemAdapter', () => {
-  const rbacItems = [
+  const rbacItems: RbacItem[] = [
     { name: 'admin', type: 'role' },
     { name: 'manager', type: 'role' },
     { name: 'user', type: 'role' },
     { name: 'updateProfile', type: 'permission' },
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }
   ];
-  const rbacItem = { name: 'region manager', type: 'role' };
+  const rbacItem: RbacItem = { name: 'region manager', type: 'role' };
 
   it('should store many items', async () => {
     const adapter = new RbacMongodbItemAdapter();

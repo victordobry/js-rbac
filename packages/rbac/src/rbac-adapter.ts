@@ -10,6 +10,14 @@ export interface RbacAssignmentAdapter {
   deleteByUser: (userId: RbacUserId) => Promise<any>;
 }
 
+export interface RbacItemAdapter {
+  store: (items: RbacItem[]) => Promise<any>;
+  load: () => Promise<any>;
+  create: (name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) => Promise<any>;
+  find: (name: RbacItem['name']) => Promise<any>;
+  findByType: (type: RbacItem['type']) => Promise<any>;
+}
+
 interface RbacHierarchy {
   rbacAssignments: RbacAssignment[];
   rbacItems: RbacItem[];
@@ -19,13 +27,13 @@ interface RbacHierarchy {
   
 export class RbacAdapter {
   private assignmentAdapter: RbacAssignmentAdapter;
-  private itemAdapter: any;
+  private itemAdapter: RbacItemAdapter;
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
   constructor(deps: {
     assignmentAdapter: RbacAssignmentAdapter,
-    itemAdapter: any,
+    itemAdapter: RbacItemAdapter,
     itemChildAdapter: any,
     ruleAdapter: any,
   }) {

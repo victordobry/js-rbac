@@ -2,7 +2,7 @@ import assert from 'assert';
 import express from 'express';
 import axios from 'axios';
 
-import { RbacAdapter } from '@brainstaff/rbac';
+import { RbacAdapter, RbacItem } from '@brainstaff/rbac';
 
 import { RbacHttpAssignmentAdapter } from '../src/index.js';
 import { RbacHttpItemAdapter } from '../src/index.js';
@@ -117,7 +117,7 @@ describe('RbacHttpAssignmentAdapter', () => {
 });
 
 describe('RbacHttpItemAdapter', () => {
-  const rbacItems = [
+  const rbacItems: RbacItem[] = [
     { name: 'admin', type: 'role' },
     { name: 'manager', type: 'role' },
     { name: 'user', type: 'role' },
@@ -168,7 +168,7 @@ describe('RbacHttpItemAdapter', () => {
   });
 
   it('should not create existing item', async () => {
-    const item = { name: 'updateOwnProfile', type: 'permission', rule: 'IsAuthor' };
+    const item: RbacItem = { name: 'updateOwnProfile', type: 'permission', rule: 'IsAuthor' };
     try {
       await itemAdapter.create(item.name, item.type, item.rule);
       assert.fail('Should throw on create.');
@@ -178,9 +178,9 @@ describe('RbacHttpItemAdapter', () => {
   });
 
   it('should create item', async () => {
-    const assignment = { name: 'updateOwnPost', type: 'permission', rule: 'IsAuthor' };
-    const response = await itemAdapter.create(assignment.name, assignment.type, assignment.rule);
-    assert.deepEqual(response, assignment);
+    const item: RbacItem = { name: 'updateOwnPost', type: 'permission', rule: 'IsAuthor' };
+    const response = await itemAdapter.create(item.name, item.type, item.rule);
+    assert.deepEqual(response, item);
   });
 
   it('should find item by name', async () => {

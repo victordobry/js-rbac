@@ -1,5 +1,8 @@
 import fs from 'node:fs';
+
 import knex from 'knex';
+
+import { RbacItem } from '@brainstaff/rbac';
 
 import { RbacPostgresAssignmentAdapter } from '../src/index.js';
 import { RbacPostgresItemAdapter } from '../src/index.js';
@@ -43,14 +46,14 @@ after(() => client.destroy());
 describe('RbacPostgresItemAdapter', async () => {
   const { expect } = await import('chai');
 
-  const rbacItems = [
+  const rbacItems: RbacItem[] = [
     { name: 'admin', type: 'role' },
     { name: 'manager', type: 'role' },
     { name: 'user', type: 'role' },
     { name: 'updateProfile', type: 'permission' },
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }
   ];
-  const rbacItem = { name: 'region manager', type: 'role' };
+  const rbacItem: RbacItem = { name: 'region manager', type: 'role' };
 
   const timeout = 3000;
 

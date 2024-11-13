@@ -10,6 +10,7 @@ export {
 } from "./rbac-abstractions";
 export {
   RbacAssignmentAdapter,
+  RbacItemAdapter,
   RbacAdapter,
 } from "./rbac-adapter";
 export { RbacManager } from "./rbac-manager";

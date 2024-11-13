@@ -1,11 +1,9 @@
-export default class RbacInMemoryItemAdapter {
-  private rbacItems: any[];
+import { RbacItem, RbacItemAdapter, RbacRule } from "@brainstaff/rbac";
 
-  constructor() {
-    this.rbacItems = [];
-  }
+export default class RbacInMemoryItemAdapter implements RbacItemAdapter {
+  private rbacItems: RbacItem[] = [];
 
-  async store(rbacItems: any) {
+  async store(rbacItems: RbacItem[]) {
     this.rbacItems = [...rbacItems];
   }
 
@@ -13,18 +11,18 @@ export default class RbacInMemoryItemAdapter {
     return this.rbacItems;
   }
 
-  async create(name: any, type: any, rule: any) {
+  async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
     if (this.rbacItems.find(item => item.name === name)) {
       throw new Error(`Item ${name} already exists.`);
     }
     this.rbacItems.push({ name, type, rule });
   }
 
-  async find(name: any) {
+  async find(name: RbacItem['name']) {
     return this.rbacItems.find(rbacItem => rbacItem.name === name);
   }
 
-  async findByType(type: any) {
+  async findByType(type: RbacItem['type']) {
     return this.rbacItems.filter(rbacItem => rbacItem.type === type);
   }
 }

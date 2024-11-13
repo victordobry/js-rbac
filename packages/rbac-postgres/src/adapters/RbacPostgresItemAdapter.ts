@@ -1,17 +1,18 @@
 import { Knex } from 'knex';
 
 import RbacItemModel from '../models/RbacItem';
+import { RbacItem, RbacItemAdapter, RbacRule } from '@brainstaff/rbac';
 
-class RbacPostgresItemAdapter {
+export default class RbacPostgresItemAdapter implements RbacItemAdapter {
   constructor(deps: {
     client: Knex
   }) {
     RbacItemModel.knex(deps.client);
   }
 
-  async store(rbacItems: any[]) {
+  async store(rbacItems: RbacItem[]) {
     await RbacItemModel.query().delete();
-    const items = await RbacItemModel.query().insert(rbacItems) as unknown as any[];
+    const items = await RbacItemModel.query().insert(rbacItems);
     return items.map(assignment => assignment.toJSON());
   }
 
@@ -20,25 +21,22 @@ class RbacPostgresItemAdapter {
     return items.map(assignment => assignment.toJSON());
   }
 
-  async create(name: any, type: any, rule?: any) {
+  async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
     let item = await RbacItemModel.query().findOne({ name });
     if (item) {
       throw new Error(`Item ${name} already exists.`);
     }
-
     item = await RbacItemModel.query().insert({ name, type, rule });
     return item && item.toJSON();
   }
 
-  async find(name: any) {
+  async find(name: RbacItem['name']) {
     const item = await RbacItemModel.query().findById(name);
     return item && item.toJSON();
   }
 
-  async findByType(type: any) {
+  async findByType(type: RbacItem['type']) {
     const items = await RbacItemModel.query().where({ type });
     return items.map(item => item.toJSON());
   }
 }
-
-export default RbacPostgresItemAdapter;
