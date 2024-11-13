@@ -1,11 +1,9 @@
-export default class RbacInMemoryRuleAdapter {
-  private rbacRules: any[];
+import { RbacRule, RbacRuleAdapter } from "@brainstaff/rbac";
 
-  constructor() {
-    this.rbacRules = [];
-  }
+export default class RbacInMemoryRuleAdapter implements RbacRuleAdapter {
+  private rbacRules: RbacRule[] = [];
 
-  async store(rbacRules: any[]) {
+  async store(rbacRules: RbacRule[]) {
     this.rbacRules = [...rbacRules];
   }
 
@@ -13,7 +11,7 @@ export default class RbacInMemoryRuleAdapter {
     return this.rbacRules;
   }
 
-  async create(name: any) {
+  async create(name: RbacRule['name']) {
     if (this.rbacRules.find(rule => rule.name === name)) {
       throw new Error(`Rule ${name} already exists.`);
     }

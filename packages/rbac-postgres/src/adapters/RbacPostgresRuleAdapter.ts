@@ -1,17 +1,19 @@
 import { Knex } from 'knex';
 
+import { RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
+
 import RbacRuleModel from '../models/RbacRule';
 
-class RbacPostgresRuleAdapter {
+export default class RbacPostgresRuleAdapter implements RbacRuleAdapter {
   constructor(deps: {
     client: Knex
   }) {
     RbacRuleModel.knex(deps.client);
   }
 
-  async store(rbacRules: any[]) {
+  async store(rbacRules: RbacRule[]) {
     await RbacRuleModel.query().delete();
-    const rules = await RbacRuleModel.query().insert(rbacRules) as unknown as any[];
+    const rules = await RbacRuleModel.query().insert(rbacRules);
     return rules.map(rule => rule.toJSON());
   }
 
@@ -20,7 +22,7 @@ class RbacPostgresRuleAdapter {
     return rules.map(rule => rule.toJSON());
   }
 
-  async create(name: any) {
+  async create(name: RbacRule['name']) {
     let rule = await RbacRuleModel.query().findById(name);
     if (rule) {
       throw new Error(`Rule ${name} already exists.`);
@@ -29,5 +31,3 @@ class RbacPostgresRuleAdapter {
     return rule && rule.toJSON();
   }
 }
-
-export default RbacPostgresRuleAdapter;

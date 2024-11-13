@@ -1,6 +1,8 @@
 import { AxiosInstance } from 'axios';
 
-export default class RbacHttpRuleAdapter {
+import { RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
+
+export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
   private client: AxiosInstance;
 
   constructor(deps: {
@@ -9,7 +11,7 @@ export default class RbacHttpRuleAdapter {
     this.client = deps.client;
   }
 
-  async store(rbacRules: any[]) {
+  async store(rbacRules: RbacRule[]) {
     try {
       const response = await this.client.post(`/rbac/rules`, { rbacRules });
       return response.data;
@@ -35,7 +37,7 @@ export default class RbacHttpRuleAdapter {
     }
   }
 
-  async create(name: any) {
+  async create(name: RbacRule['name']) {
     try {
       const response = await this.client.post(`/rbac/rules`, { name });
       return response.data;
