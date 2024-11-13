@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import express from 'express';
 import axios from 'axios';
 
-import { RbacAdapter, RbacItem } from '@brainstaff/rbac';
+import { RbacAdapter, RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChildAdapter, RbacRuleAdapter } from '@brainstaff/rbac';
 
 import { RbacHttpAssignmentAdapter } from '../src/index.js';
 import { RbacHttpItemAdapter } from '../src/index.js';
@@ -21,7 +21,7 @@ describe('RbacHttpAssignmentAdapter', () => {
     { userId: 'alexey', role: 'admin' },
     { userId: 'ilya', role: 'manager' }
   ];
-  const assignmentAdapter = new RbacHttpAssignmentAdapter({ client });
+  const assignmentAdapter: RbacAssignmentAdapter = new RbacHttpAssignmentAdapter({ client });
   let server: http.Server;
 
   before(async () => {
@@ -126,7 +126,7 @@ describe('RbacHttpItemAdapter', () => {
     { name: 'updateProfile', type: 'permission' },
     { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
   ];
-  const itemAdapter = new RbacHttpItemAdapter({ client });
+  const itemAdapter: RbacItemAdapter = new RbacHttpItemAdapter({ client });
   let server: http.Server;
 
   before(async () => {
@@ -211,7 +211,7 @@ describe('RbacHttpItemChildAdapter', () => {
     { parent: 'updateOwnProfile', child: 'updateProfile' },
     { parent: 'admin', child: 'updateProfile' }
   ];
-  const itemChildAdapter = new RbacHttpItemChildAdapter({ client });
+  const itemChildAdapter: RbacItemChildAdapter = new RbacHttpItemChildAdapter({ client });
   let server: http.Server;
 
   before(async () => {
@@ -281,7 +281,7 @@ describe('RbacHttpRuleAdapter', () => {
   const rbacRules = [
     { name: 'IsOwnProfile' }
   ];
-  const ruleAdapter = new RbacHttpRuleAdapter({ client });
+  const ruleAdapter: RbacRuleAdapter = new RbacHttpRuleAdapter({ client });
   let server: http.Server;
 
   before(async () => {

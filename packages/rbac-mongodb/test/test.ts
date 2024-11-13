@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { RbacItem } from '@brainstaff/rbac';
+import { RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChildAdapter, RbacRuleAdapter } from '@brainstaff/rbac';
 
 import { RbacMongodbAssignmentAdapter } from '../src/index.js';
 import { RbacMongodbItemAdapter } from '../src/index.js';
@@ -65,7 +65,7 @@ describe('RbacMongodbAssignmentAdapter', () => {
   const rbacAssignmet = { userId: 'igor', role: 'manager' };
 
   it('should store many assignments', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.store(rbacAssignments);
     expect(result).to.be.an('array').that.have.length(2);
     expect(result[0]).to.include(rbacAssignments[0]);
@@ -73,35 +73,35 @@ describe('RbacMongodbAssignmentAdapter', () => {
   }).timeout(timeout);
 
   it('should load all assignment', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
     const members: any[] = [];
-    result.forEach(item => members.push(item.userId));
+    result.forEach((item: any) => members.push(item.userId));
     expect(members).to.have.members([rbacAssignments[0].userId, rbacAssignments[1].userId]);
   }).timeout(timeout);
 
   it('should create single assignment', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.create(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should find single assignments', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.find(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should find all assignments by user', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.findByUserId(rbacAssignmet.userId);
     expect(result).to.be.an('array').that.have.length(1);
     expect(result[0]).to.include(rbacAssignmet);
   }).timeout(timeout);
 
   it('should delete single assignments', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.delete(rbacAssignmet.userId, rbacAssignmet.role);
     expect(result).to.be.an('object').that.include(rbacAssignmet);
     const remainData = await adapter.load();
@@ -109,7 +109,7 @@ describe('RbacMongodbAssignmentAdapter', () => {
   }).timeout(timeout);
 
   it('should delete all assignments by user', async () => {
-    const adapter = new RbacMongodbAssignmentAdapter();
+    const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
     const result = await adapter.deleteByUser(rbacAssignments[0].userId);
     expect(result).to.be.an('object').that.include({ deletedCount: 1, acknowledged: true });
     const remainData = await adapter.load();
@@ -128,27 +128,27 @@ describe('RbacMongodbItemAdapter', () => {
   const rbacItem: RbacItem = { name: 'region manager', type: 'role' };
 
   it('should store many items', async () => {
-    const adapter = new RbacMongodbItemAdapter();
+    const adapter: RbacItemAdapter = new RbacMongodbItemAdapter();
     const result = await adapter.store(rbacItems);
     expect(result).to.be.an('array').that.have.length(5);
-    result.forEach((item, index) => expect(item).to.include(rbacItems[index]));
+    result.forEach((item: any, index: any) => expect(item).to.include(rbacItems[index]));
   }).timeout(timeout);
 
   it('should load all items', async () => {
-    const adapter = new RbacMongodbItemAdapter();
+    const adapter: RbacItemAdapter = new RbacMongodbItemAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
     const members: any[] = [];
-    result.forEach(item => members.push(item.name));
+    result.forEach((item: any) => members.push(item.name));
     expect(members).to.have.members(rbacItems.map(item => item.name));
   }).timeout(timeout);
 
   it('should load all roles', async () => {
-    const adapter = new RbacMongodbItemAdapter();
+    const adapter: RbacItemAdapter = new RbacMongodbItemAdapter();
     const result = await adapter.findByType('role');
     expect(result).to.be.an('array').that.have.length(3);
     const members: any[] = [];
-    result.forEach(item => members.push(item.name));
+    result.forEach((item: any) => members.push(item.name));
     expect(members).to.have.members(rbacItems.reduce((result, item) => {
       if (item.type === 'role') {
         result.push(item.name);
@@ -158,13 +158,13 @@ describe('RbacMongodbItemAdapter', () => {
   }).timeout(timeout);
 
   it('should create single item', async () => {
-    const adapter = new RbacMongodbItemAdapter();
+    const adapter: RbacItemAdapter = new RbacMongodbItemAdapter();
     const result = await adapter.create(rbacItem.name, rbacItem.type);
     expect(result).to.be.an('object').that.include(rbacItem);
   }).timeout(timeout);
 
   it('should find single item by name', async () => {
-    const adapter = new RbacMongodbItemAdapter();
+    const adapter: RbacItemAdapter = new RbacMongodbItemAdapter();
     const result = await adapter.find(rbacItem.name);
     expect(result).to.be.an('object').that.include(rbacItem);
   }).timeout(timeout);
@@ -181,29 +181,29 @@ describe('RbacMongodbItemChildAdapter', () => {
   const rbacItemChild = { parent: 'manager', child: 'region manager' };
 
   it('should store many children items', async () => {
-    const adapter = new RbacMongodbItemChildAdapter();
+    const adapter: RbacItemChildAdapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.store(rbacItemChildren);
     expect(result).to.be.an('array').that.have.length(5);
     result.forEach((item: any, index: any) => expect(item).to.include(rbacItemChildren[index]));
   }).timeout(timeout);
 
   it('should load all child items', async () => {
-    const adapter = new RbacMongodbItemChildAdapter();
+    const adapter: RbacItemChildAdapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(5);
     const members: any[] = [];
-    result.forEach(item => members.push(item.parent));
+    result.forEach((item: any) => members.push(item.parent));
     expect(members).to.have.members(rbacItemChildren.map(item => item.parent));
   }).timeout(timeout);
 
   it('should create single child item', async () => {
-    const adapter = new RbacMongodbItemChildAdapter();
+    const adapter: RbacItemChildAdapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.create(rbacItemChild.parent, rbacItemChild.child);
     expect(result).to.be.an('object').that.include(rbacItemChild);
   }).timeout(timeout);
 
   it('should find all children item by parent', async () => {
-    const adapter = new RbacMongodbItemChildAdapter();
+    const adapter: RbacItemChildAdapter = new RbacMongodbItemChildAdapter();
     const result = await adapter.findByParent(rbacItemChildren[0].parent);
     expect(result).to.be.an('array').that.have.length(2);
   }).timeout(timeout);
@@ -217,25 +217,24 @@ describe('RbacMongodbRuleAdapter', () => {
   const rbacRule = { name: 'IsGroupLeader' };
 
   it('should store many rules', async () => {
-    const adapter = new RbacMongodbRuleAdapter();
+    const adapter: RbacRuleAdapter = new RbacMongodbRuleAdapter();
     const result = await adapter.store(rbacRules);
     expect(result).to.be.an('array').that.have.length(2);
-    result.forEach((item, index) => expect(item).to.include(rbacRules[index]));
+    result.forEach((item: any, index: any) => expect(item).to.include(rbacRules[index]));
   }).timeout(timeout);
 
   it('should load all rules', async () => {
-    const adapter = new RbacMongodbRuleAdapter();
+    const adapter: RbacRuleAdapter = new RbacMongodbRuleAdapter();
     const result = await adapter.load();
     expect(result).to.be.an('array').that.have.length(2);
     const members: any[] = [];
-    result.forEach(item => members.push(item.name));
+    result.forEach((item: any) => members.push(item.name));
     expect(members).to.have.members(rbacRules.map(item => item.name));
   }).timeout(timeout);
 
   it('should create single rule', async () => {
-    const adapter = new RbacMongodbRuleAdapter();
+    const adapter: RbacRuleAdapter = new RbacMongodbRuleAdapter();
     const result = await adapter.create(rbacRule.name);
     expect(result).to.be.an('object').that.include(rbacRule);
   }).timeout(timeout);
 });
-

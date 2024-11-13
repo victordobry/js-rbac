@@ -1,4 +1,6 @@
-import assert from 'assert';
+import assert from 'node:assert';
+
+import { RbacAssignmentAdapter } from '@brainstaff/rbac';
 
 import { RbacInMemoryAssignmentAdapter } from '../src/index.js';
 
@@ -11,9 +13,9 @@ const rbacGraph = {
 
 describe('RbacInMemoryAssignmentAdapter', () => {
   it('should be able to store data in memory', async () => {
-    const rbacAssignmentAdapter = new RbacInMemoryAssignmentAdapter();
-    assert.deepEqual(rbacAssignmentAdapter.rbacAssignments, []);
+    const rbacAssignmentAdapter: RbacAssignmentAdapter = new RbacInMemoryAssignmentAdapter();
+    assert.deepEqual(await rbacAssignmentAdapter.load(), []);
     await rbacAssignmentAdapter.store(rbacGraph.rbacAssignment);
-    assert.deepEqual(rbacAssignmentAdapter.rbacAssignments, rbacGraph.rbacAssignment);
+    assert.deepEqual(await rbacAssignmentAdapter.load(), rbacGraph.rbacAssignment);
   });
 });
