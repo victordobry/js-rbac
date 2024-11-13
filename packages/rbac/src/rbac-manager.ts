@@ -5,7 +5,7 @@ export class RbacManager {
   private rbacCacheAdapter: RbacAdapter;
   private rbacPersistentAdapter: RbacAdapter;
   private rbacRuleFactory: RbacRuleFactory;
-  private isCacheLoaded: any;
+  private isCacheLoaded: boolean;
 
   constructor({ rbacCacheAdapter, rbacPersistentAdapter, rbacRuleFactory }: {
     rbacCacheAdapter: RbacAdapter,

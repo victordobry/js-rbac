@@ -1,8 +1,8 @@
 import {AxiosInstance} from 'axios';
 
-import { RbacUserId } from '@brainstaff/rbac';
+import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacUserId } from '@brainstaff/rbac';
 
-export default class RbacHttpAssignmentAdapter {
+export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter {
   private client: AxiosInstance;
 
   constructor(deps: {
@@ -11,7 +11,7 @@ export default class RbacHttpAssignmentAdapter {
     this.client = deps.client;
   }
 
-  async store(rbacAssignments: any[]) {
+  async store(rbacAssignments: RbacAssignment[]) {
     try {
       const response = await this.client.post(`/rbac/assignments`, { rbacAssignments });
       return response.data;
@@ -37,7 +37,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async create(userId: RbacUserId, role: any) {
+  async create(userId: RbacUserId, role: RbacItem['name']) {
     try {
       const response = await this.client.post(`/rbac/assignments`, { userId, role });
       return response.data;
@@ -50,7 +50,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async find(userId: RbacUserId, role: any) {
+  async find(userId: RbacUserId, role: RbacItem['name']) {
     try {
       const response = await this.client.get(`/rbac/assignments/${userId}/${role}`);
       return response.data;
@@ -76,7 +76,7 @@ export default class RbacHttpAssignmentAdapter {
     }
   }
 
-  async delete(userId: RbacUserId, role: any) {
+  async delete(userId: RbacUserId, role: RbacItem['name']) {
     try {
       const response = await this.client.delete(`/rbac/assignments/${userId}/${role}`);
       return response.data;

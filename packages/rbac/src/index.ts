@@ -8,5 +8,8 @@ export {
   RbacItemChild,
   RbacAssignment,
 } from "./rbac-abstractions";
-export { RbacAdapter } from "./rbac-adapter";
+export {
+  RbacAssignmentAdapter,
+  RbacAdapter,
+} from "./rbac-adapter";
 export { RbacManager } from "./rbac-manager";

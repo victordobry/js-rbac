@@ -1,5 +1,15 @@
 import { RbacAssignment, RbacItem, RbacItemChild, RbacRule, RbacUserId } from "./rbac-abstractions";
 
+export interface RbacAssignmentAdapter {
+  store: (assignments: RbacAssignment[]) => Promise<any>;
+  load: () => Promise<any>;
+  create: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
+  find: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
+  findByUserId: (userId: RbacUserId) => Promise<any>;
+  delete: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
+  deleteByUser: (userId: RbacUserId) => Promise<any>;
+}
+
 interface RbacHierarchy {
   rbacAssignments: RbacAssignment[];
   rbacItems: RbacItem[];
@@ -8,13 +18,13 @@ interface RbacHierarchy {
 }
   
 export class RbacAdapter {
-  private assignmentAdapter: any;
+  private assignmentAdapter: RbacAssignmentAdapter;
   private itemAdapter: any;
   private itemChildAdapter: any;
   private ruleAdapter: any;
 
   constructor(deps: {
-    assignmentAdapter: any,
+    assignmentAdapter: RbacAssignmentAdapter,
     itemAdapter: any,
     itemChildAdapter: any,
     ruleAdapter: any,

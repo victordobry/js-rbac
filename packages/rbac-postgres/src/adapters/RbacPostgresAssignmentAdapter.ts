@@ -1,19 +1,19 @@
 import { Knex } from 'knex';
 
-import { RbacUserId } from '@brainstaff/rbac';
+import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacUserId } from '@brainstaff/rbac';
 
 import RbacAssignmentModel from '../models/RbacAssignment';
 
-class RbacPostgresAssignmentAdapter {
+class RbacPostgresAssignmentAdapter implements RbacAssignmentAdapter {
   constructor(deps: {
     client: Knex
   }) {
     RbacAssignmentModel.knex(deps.client);
   }
 
-  async store(rbacAssignments: any[]) {
+  async store(rbacAssignments: RbacAssignment[]) {
     await RbacAssignmentModel.query().delete();
-    const assignments = await RbacAssignmentModel.query().insert(rbacAssignments) as unknown as any[];
+    const assignments = await RbacAssignmentModel.query().insert(rbacAssignments);
     return assignments.map(assignment => assignment.toJSON());
   }
 
@@ -22,7 +22,7 @@ class RbacPostgresAssignmentAdapter {
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async create(userId: RbacUserId, role: any) {
+  async create(userId: RbacUserId, role: RbacItem['name']) {
     let assignment = await RbacAssignmentModel.query().findById([userId, role]);
     if (assignment) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
@@ -31,7 +31,7 @@ class RbacPostgresAssignmentAdapter {
     return assignment && assignment.toJSON();
   }
 
-  async find(userId: RbacUserId, role: any) {
+  async find(userId: RbacUserId, role: RbacItem['name']) {
     const assignment = await RbacAssignmentModel.query().findById([userId, role]);
     return assignment && assignment.toJSON();
   }
@@ -41,7 +41,7 @@ class RbacPostgresAssignmentAdapter {
     return assignments.map(assignment => assignment.toJSON());
   }
 
-  async delete(userId: RbacUserId, role: any) {
+  async delete(userId: RbacUserId, role: RbacItem['name']) {
     const assignment = await RbacAssignmentModel.query().findById([userId, role]);
     if (!assignment) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
