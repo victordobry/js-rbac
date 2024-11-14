@@ -78,7 +78,7 @@ const createRbacManager = async () => {
   return rbacManager;
 };
 
-describe('RbacManager', () => {
+describe('RbacManager', function() {
   it('should assign and revoke permissions to user', async () => {
     const rbacManager = await createRbacManager();
     assert.equal(await rbacManager.checkAccess("igor", "manager"), false);

@@ -13,8 +13,7 @@ export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
 
   async store(values: RbacRule[]) {
     try {
-      const res = await this.client.post(`/rbac/rules`, { rbacRules: values });
-      return res.data;
+      await this.client.post(`/rbac/rules`, { rbacRules: values });
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -39,13 +38,25 @@ export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
 
   async create(name: RbacRule['name']) {
     try {
-      const res = await this.client.post(`/rbac/rules`, { name });
-      return res.data;
+      await this.client.post(`/rbac/rules`, { name });
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
       } else {
         throw new Error("Unknown error.");
+      }
+    }
+  }
+
+  async find(name: RbacRule['name']) {
+    try {
+      const res = await this.client.get(`/rbac/rules/${name}`);
+      return res.data == null ? null : new RbacRule(res.data);
+    } catch (error: any) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      } else {
+        throw new Error(error.toString());
       }
     }
   }

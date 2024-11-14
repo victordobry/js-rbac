@@ -18,6 +18,10 @@ export default class RbacInMemoryItemChildAdapter implements RbacItemChildAdapte
     this.entries.push(new RbacItemChild({ parent, child }));
   }
 
+  async find(parent: RbacItem['name'], child: RbacItem['name']) {
+    return this.entries.find(x => x.parent === parent && x.child === child) ?? null;
+  }
+
   async findByParent(parent: RbacItem['name']) {
     return this.entries.filter(x => x.parent === parent);
   }

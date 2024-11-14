@@ -13,8 +13,7 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
 
   async store(values: RbacItemChild[]) {
     try {
-      const res = await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
-      return res.data;
+      await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -39,8 +38,20 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
 
   async create(parent: RbacItem['name'], child: RbacItem['name']) {
     try {
-      const res = await this.client.post(`/rbac/item-children`, { parent, child });
-      return res.data;
+      await this.client.post(`/rbac/item-children`, { parent, child });
+    } catch (error: any) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      } else {
+        throw new Error("Unknown error.");
+      }
+    }
+  }
+
+  async find(parent: RbacItem['name'], child: RbacItem['name']) {
+    try {
+      const res = await this.client.get(`/rbac/item-children/${parent}/${child}`);
+      return res.data == null ? null : new RbacItemChild(res.data);
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);

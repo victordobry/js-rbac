@@ -17,4 +17,8 @@ export default class RbacInMemoryRuleAdapter implements RbacRuleAdapter {
     }
     this.entries.push(new RbacRule({ name }));
   }
+
+  async find(name: RbacRule['name']) {
+    return this.entries.find(x => x.name === name) ?? null;
+  }
 }

@@ -4,7 +4,7 @@ import RbacItemModel from '../models/RbacItem';
 export default class RbacMongodbItemAdapter implements RbacItemAdapter {
   async store(values: RbacItem[]) {
     await RbacItemModel.deleteMany({});
-    return RbacItemModel.create(values);
+    await RbacItemModel.create(values);
   }
 
   async load() {
@@ -16,7 +16,7 @@ export default class RbacMongodbItemAdapter implements RbacItemAdapter {
     if (await RbacItemModel.exists({ name })) {
       throw new Error(`Item ${name} already exists.`);
     }
-    return RbacItemModel.create({ name, type, rule });
+    await RbacItemModel.create({ name, type, rule });
   }
 
   async find(name: RbacItem['name']) {

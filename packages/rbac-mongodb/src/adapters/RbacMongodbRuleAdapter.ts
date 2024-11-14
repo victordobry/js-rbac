@@ -5,7 +5,7 @@ import RbacRuleModel from '../models/RbacRule';
 export default class RbacMongodbRuleAdapter implements RbacRuleAdapter {
   async store(values: RbacRule[]) {
     await RbacRuleModel.deleteMany({});
-    return RbacRuleModel.create(values);
+    await RbacRuleModel.create(values);
   }
 
   async load() {
@@ -14,6 +14,11 @@ export default class RbacMongodbRuleAdapter implements RbacRuleAdapter {
   }
 
   async create(name: RbacRule['name']) {
-    return RbacRuleModel.create({ name });
+    await RbacRuleModel.create({ name });
+  }
+
+  async find(name: RbacRule['name']) {
+    const entry = await RbacRuleModel.findOne({ name });
+    return entry == null ? null : new RbacRule(entry);
   }
 }

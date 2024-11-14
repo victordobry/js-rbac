@@ -2,7 +2,9 @@ import { Model } from 'objection';
 
 import { RbacItemChild } from '@brainstaff/rbac';
 
-interface RbacItemChildModel extends RbacItemChild {}
+import { ModelOf } from '../utils/model-of';
+
+interface RbacItemChildModel extends ModelOf<RbacItemChild> {}
 
 class RbacItemChildModel extends Model {
   static get tableName() {

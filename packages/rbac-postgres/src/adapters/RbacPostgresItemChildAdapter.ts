@@ -13,8 +13,7 @@ export default class RbacPostgresItemChildAdapter implements RbacItemChildAdapte
   
   async store(values: RbacItemChild[]) {
     await RbacItemChildModel.query().delete();
-    const entries = await RbacItemChildModel.query().insert(values);
-    return entries.map(x => x.toJSON());
+    await RbacItemChildModel.query().insert(values);
   }
 
   async load() {
@@ -26,8 +25,12 @@ export default class RbacPostgresItemChildAdapter implements RbacItemChildAdapte
     if (await RbacItemChildModel.query().findById([parent, child])) {
       throw new Error(`Association of ${parent} and ${child} already exists.`);
     }
-    const entry = await RbacItemChildModel.query().insert({ parent, child });
-    return entry.toJSON();
+    await RbacItemChildModel.query().insert({ parent, child });
+  }
+
+  async find(parent: RbacItem['name'], child: RbacItem['name']) {
+    const value = await RbacItemChildModel.query().findById([parent, child]);
+    return value == null ? null : new RbacItemChild(value);
   }
 
   async findByParent(parent: RbacItem['name']) {

@@ -21,6 +21,8 @@ let client = knex({
   }
 });
 
+const timeout = 3000;
+
 let expect: Chai.ExpectStatic;
 
 before(async () => {
@@ -43,203 +45,158 @@ before(async () => {
 
 after(() => client.destroy());
 
-describe('RbacPostgresItemAdapter', async () => {
-  const { expect } = await import('chai');
+describe('RbacPostgresItemAdapter', function() {
+  this.timeout(timeout);
 
-  const rbacItems: RbacItem[] = [
-    { name: 'admin', type: 'role' },
-    { name: 'manager', type: 'role' },
-    { name: 'user', type: 'role' },
-    { name: 'updateProfile', type: 'permission' },
-    { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }
-  ];
-  const rbacItem: RbacItem = { name: 'region manager', type: 'role' };
+  const $ = {
+    admin: new RbacItem({ name: 'admin', type: 'role' }),
+    manager: new RbacItem({ name: 'manager', type: 'role' }),
+    user: new RbacItem({ name: 'user', type: 'role' }),
+    updateProfile: new RbacItem({ name: 'updateProfile', type: 'permission' }),
+    updateOwnProfile: new RbacItem({ name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }),
+    regionManager: new RbacItem({ name: 'region manager', type: 'role' }),
+  }
 
-  const timeout = 3000;
-
-  it('should store many items', async () => {
+  it('should store many and load them', async () => {
     const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
-    const result = await adapter.store(rbacItems);
-    expect(result).to.be.an('array').that.have.length(5);
-    result.forEach((item: any, index: any) => expect(item).to.include(rbacItems[index]));
-  }).timeout(timeout);
+    const values = [$.admin, $.manager, $.user, $.updateProfile, $.updateOwnProfile];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    expect(entries).to.have.deep.members(values);
+  });
 
-  it('should load all items', async () => {
+  it('should create one and find it', async () => {
     const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
-    const result = await adapter.load();
-    expect(result).to.be.an('array').that.have.length(5);
-    const members: any[] = [];
-    result.forEach((item: any) => members.push(item.name));
-    expect(members).to.have.members(rbacItems.map(item => item.name));
-  }).timeout(timeout);
+    await adapter.create($.regionManager.name, $.regionManager.type);
+    const entry = await adapter.find($.regionManager.name);
+    expect(entry).to.be.an('object').that.include($.regionManager);
+  });
 
-  it('should load all roles', async () => {
+  it('should not create existing one', async () => {
     const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
-    const result = await adapter.findByType('role');
-    expect(result).to.be.an('array').that.have.length(3);
-    const members: any[] = [];
-    result.forEach((item: any) => members.push(item.name));
-    expect(members).to.have.members(rbacItems.reduce((result, item) => {
-      if (item.type === 'role') {
-        result.push(item.name);
-      }
-      return result;
-    }, [] as any[]));
-  }).timeout(timeout);
+    try {
+      await adapter.create($.regionManager.name, $.regionManager.type, $.regionManager.rule);
+      expect.fail('Should throw on create.');
+    } catch (error: any) {
+      expect(error.message).to.be.equal(`Item ${$.regionManager.name} already exists.`);
+    }
+  });
 
-  it('should create single item', async () => {
+  it('should find all roles', async () => {
     const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
-    const result = await adapter.create(rbacItem.name, rbacItem.type);
-    expect(result).to.be.an('object').that.include(rbacItem);
-  }).timeout(timeout);
-
-  it('should find single item by name', async () => {
-    const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
-    const result = await adapter.find(rbacItem.name);
-    expect(result).to.be.an('object').that.include(rbacItem);
-  }).timeout(timeout);
+    const entries = await adapter.findByType('role');
+    expect(entries).to.have.deep.members([$.admin, $.manager, $.user, $.regionManager]);
+  });
 });
 
-describe('RbacPostgresAssignmentAdapter', async () => {
-  const { expect } = await import('chai');
+describe('RbacPostgresAssignmentAdapter', function() {
+  this.timeout(timeout);
 
-  const timeout = 2000;
+  const $ = {
+    alexey: new RbacAssignment({ userId: 'alexey', role: 'admin' }),
+    ilya: new RbacAssignment({ userId: 'ilya', role: 'manager' }),
+    igor: new RbacAssignment({ userId: 'igor', role: 'manager' }),
+  }
 
-  const rbacAssignments: RbacAssignment[] = [
-    { userId: 'user1', role: 'admin' },
-    { userId: 'user2', role: 'manager' },
-  ];
-  const rbacAssignmet: RbacAssignment = {
-    userId: 'user3',
-    role: 'manager',
+  it('should store many and load them', async () => {
+    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
+    const values = [$.alexey, $.ilya];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    expect(entries).to.have.deep.members(values);
+  });
+
+  it('should create one and find it', async () => {
+    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
+    await adapter.create($.igor.userId, $.igor.role);
+    const entry = await adapter.find($.igor.userId, $.igor.role);
+    expect(entry).to.be.an('object').that.include($.igor);
+  });
+
+  it('should find many by user', async () => {
+    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
+    const entries = await adapter.findByUserId($.igor.userId);
+    expect(entries).to.have.deep.members([$.igor]);
+  });
+
+  it('should delete one and be unable to find it', async () => {
+    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
+    await adapter.delete($.igor.userId, $.igor.role);
+    const entry = await adapter.find($.igor.userId, $.igor.role);
+    expect(entry).to.be.null;
+    const all = await adapter.load();
+    expect(all).to.have.deep.members([$.alexey, $.ilya]);
+  });
+
+  it('should delete many by user', async () => {
+    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
+    await adapter.deleteByUser($.alexey.userId);
+    const all = await adapter.load();
+    expect(all).to.have.deep.members([$.ilya]);
+  });
+});
+
+describe('RbacPostgresItemChildAdapter', function() {
+  this.timeout(timeout);
+
+  const $ = {
+    admin_manager: new RbacItemChild({ parent: 'admin', child: 'manager' }),
+    manager_user: new RbacItemChild({ parent: 'manager', child: 'user' }),
+    user_updateOwnProfile: new RbacItemChild({ parent: 'user', child: 'updateOwnProfile' }),
+    updateOwnProfile_updateProfile: new RbacItemChild({ parent: 'updateOwnProfile', child: 'updateProfile' }),
+    admin_updateProfile: new RbacItemChild({ parent: 'admin', child: 'updateProfile' }),
+    manager_regionManager: new RbacItemChild({ parent: 'manager', child: 'region manager' }),
+  }
+
+  it('should store many and load them', async () => {
+    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
+    const values = [
+      $.admin_manager,
+      $.manager_user,
+      $.user_updateOwnProfile,
+      $.updateOwnProfile_updateProfile,
+      $.admin_updateProfile,
+    ]
+    await adapter.store(values);
+    const entries = await adapter.load();
+    expect(entries).to.have.deep.members(values);
+  });
+
+  it('should create one and find it', async () => {
+    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
+    await adapter.create($.manager_regionManager.parent, $.manager_regionManager.child);
+    const entry = await adapter.find($.manager_regionManager.parent, $.manager_regionManager.child);
+    expect(entry).to.be.an('object').that.include($.manager_regionManager);
+  });
+
+  it('should find many by parent', async () => {
+    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
+    const entry = await adapter.findByParent($.admin_manager.parent);
+    expect(entry).to.have.deep.members([$.admin_manager, $.admin_updateProfile]);
+  });
+});
+
+describe('RbacPostgresRuleAdapter', function() {
+  this.timeout(timeout);
+
+  const $ = {
+    IsOwnProfile: new RbacRule({ name: 'IsOwnProfile' }),
+    IsOwnDocument: new RbacRule({ name: 'IsOwnDocument' }),
+    IsGroupLeader: new RbacRule({ name: 'IsGroupLeader' }),
   };
 
-  it('should store many assignments', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.store(rbacAssignments);
-    expect(result).to.be.an('array').that.have.length(2);
-    expect(result[0]).to.include(rbacAssignments[0]);
-    expect(result[1]).to.include(rbacAssignments[1]);
-  }).timeout(timeout);
-
-  it('should load all assignment', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.load();
-    expect(result).to.be.an('array').that.have.length(2);
-    const members: any[] = [];
-    result.forEach((item: any) => members.push(item.userId));
-    expect(members).to.have.members([rbacAssignments[0].userId, rbacAssignments[1].userId]);
-  }).timeout(timeout);
-
-  it('should create single assignment', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.create(rbacAssignmet.userId, rbacAssignmet.role);
-    expect(result).to.be.an('object').that.include(rbacAssignmet);
-  }).timeout(timeout);
-
-  it('should find single assignments', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.find(rbacAssignmet.userId, rbacAssignmet.role);
-    expect(result).to.be.an('object').that.include(rbacAssignmet);
-  }).timeout(timeout);
-
-  it('should find all assignments by user', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.findByUserId(rbacAssignmet.userId);
-    expect(result).to.be.an('array').that.have.length(1);
-    expect(result[0]).to.include(rbacAssignmet);
-  }).timeout(timeout);
-
-  it('should delete single assignments', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.delete(rbacAssignmet.userId, rbacAssignmet.role);
-    expect(result).to.be.an('object').that.include(rbacAssignmet);
-    const remainData = await adapter.load();
-    expect(remainData).to.be.an('array').that.have.length(2);
-  }).timeout(timeout);
-
-  it('should delete all assignments by user', async () => {
-    const adapter: RbacAssignmentAdapter = new RbacPostgresAssignmentAdapter({ client });
-    const result = await adapter.deleteByUser(rbacAssignments[0].userId);
-    expect(result).to.be.an('array').that.deep.include(rbacAssignments[0]);
-    const remainData = await adapter.load();
-    expect(remainData).to.be.an('array').that.have.length(1);
-  }).timeout(timeout);
-});
-
-describe('RbacPostgresItemChildAdapter', async () => {
-  const { expect } = await import('chai');
-
-  const timeout = 3000;
-
-  const rbacItemChildren: RbacItemChild[] = [
-    { parent: 'admin', child: 'manager' },
-    { parent: 'manager', child: 'user' },
-    { parent: 'user', child: 'updateOwnProfile' },
-    { parent: 'updateOwnProfile', child: 'updateProfile' },
-    { parent: 'admin', child: 'updateProfile' }
-  ];
-  const rbacItemChild: RbacItemChild = { parent: 'manager', child: 'region manager' };
-
-  it('should store many children items', async () => {
-    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
-    const result = await adapter.store(rbacItemChildren);
-    expect(result).to.be.an('array').that.have.length(5);
-    result.forEach((item: any, index: any) => expect(item).to.include(rbacItemChildren[index]));
-  }).timeout(timeout);
-
-  it('should load all child items', async () => {
-    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
-    const result = await adapter.load();
-    expect(result).to.be.an('array').that.have.length(5);
-    const members: any[] = [];
-    result.forEach((item: any) => members.push(item.parent));
-    expect(members).to.have.members(rbacItemChildren.map(item => item.parent));
-  }).timeout(timeout);
-
-  it('should create single child item', async () => {
-    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
-    const result = await adapter.create(rbacItemChild.parent, rbacItemChild.child);
-    expect(result).to.be.an('object').that.include(rbacItemChild);
-  }).timeout(timeout);
-
-  it('should find all children item by parent', async () => {
-    const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
-    const result = await adapter.findByParent(rbacItemChildren[0].parent);
-    expect(result).to.be.an('array').that.have.length(2);
-  }).timeout(timeout);
-});
-
-describe('RbacPostgresRuleAdapter', async () => {
-  const { expect } = await import('chai');
-
-  const rbacRules: RbacRule[] = [
-    { name: 'IsOwnProfile' },
-    { name: 'IsOwnDocument' }
-  ];
-  const rbacRule: RbacRule = { name: 'IsGroupLeader' };
-
-  const timeout = 3000;
-
-  it('should store many rules', async () => {
+  it('should store many and load them', async () => {
     const adapter: RbacRuleAdapter = new RbacPostgresRuleAdapter({ client });
-    const result = await adapter.store(rbacRules);
-    expect(result).to.be.an('array').that.have.length(2);
-    result.forEach((item: any, index: any) => expect(item).to.include(rbacRules[index]));
-  }).timeout(timeout);
+    const values = [$.IsOwnProfile, $.IsOwnDocument];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    expect(entries).to.have.deep.members(values);
+  });
 
-  it('should load all rules', async () => {
+  it('should create one and find it', async () => {
     const adapter: RbacRuleAdapter = new RbacPostgresRuleAdapter({ client });
-    const result = await adapter.load();
-    expect(result).to.be.an('array').that.have.length(2);
-    const members: any[] = [];
-    result.forEach((item: any) => members.push(item.name));
-    expect(members).to.have.members(rbacRules.map(item => item.name));
-  }).timeout(timeout);
-
-  it('should create single rule', async () => {
-    const adapter: RbacRuleAdapter = new RbacPostgresRuleAdapter({ client });
-    const result = await adapter.create(rbacRule.name);
-    expect(result).to.be.an('object').that.include(rbacRule);
-  }).timeout(timeout);
+    await adapter.create($.IsGroupLeader.name);
+    const entry = await adapter.find($.IsGroupLeader.name);
+    expect(entry).to.be.an('object').that.include($.IsGroupLeader);
+  });
 });

@@ -5,6 +5,7 @@ import express from 'express';
 import axios from 'axios';
 
 import { RbacAdapter, RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChild, RbacItemChildAdapter, RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
+import { RbacInMemoryAssignmentAdapter, RbacInMemoryItemAdapter, RbacInMemoryItemChildAdapter, RbacInMemoryRuleAdapter } from '@brainstaff/rbac-in-memory'
 
 import { RbacHttpAssignmentAdapter } from '../src/index.js';
 import { RbacHttpItemAdapter } from '../src/index.js';
@@ -16,57 +17,45 @@ const client = axios.create({
   headers: {}
 });
 
-describe('RbacHttpAssignmentAdapter', () => {
-  const rbacAssignments: RbacAssignment[] = [
-    { userId: 'alexey', role: 'admin' },
-    { userId: 'ilya', role: 'manager' },
-  ];
-  const assignmentAdapter: RbacAssignmentAdapter = new RbacHttpAssignmentAdapter({ client });
+const timeout = 10000;
+
+const newErrHandler = (res: express.Response) => {
+  return (err: any) => res.status(400).json({ message: err.message ?? 'No message.' });
+};
+
+describe('RbacHttpAssignmentAdapter', function() {
+  this.timeout(timeout);
+  
   let server: http.Server;
 
   before(async () => {
     const app = express();
     server = app.listen(4001);
     app.use(express.json());
-    app.post('/rbac/assignments', (request, response) => {
-      response.json(request.body);
-    });
-    app.get('/rbac/assignments/:userId/:role', (request, response) => {
-      const { userId, role } = request.params;
-      response.json(rbacAssignments.find((assignment) => {
-        return assignment.userId === userId && assignment.role === role;
-      }));
-    });
-    app.get('/rbac/assignments/:userId', (request, response) => {
-      response.json(rbacAssignments.filter((assignment) => {
-        return assignment.userId === request.params.userId
-      }));
-    });
-    app.get('/rbac/assignments', (request, response) => {
-      response.json(rbacAssignments);
-    });
-    app.delete('/rbac/assignments/:userId/:role', (request, response) => {
-      const { userId, role } = request.params;
-      const assignmentIndex = rbacAssignments.findIndex((assignment) => {
-        return assignment.userId === userId && assignment.role === role;
-      });
-      if (assignmentIndex !== -1) {
-        rbacAssignments.splice(assignmentIndex, 1);
+    const db = new RbacInMemoryAssignmentAdapter();
+    app.post('/rbac/assignments', (req, res) => {
+      const errHandler = newErrHandler(res);
+      const { rbacAssignments, userId, role } = req.body;
+      if (rbacAssignments) {
+        db.store(rbacAssignments).then(() => res.end()).catch(errHandler);
       } else {
-        response.status(400).json({ message: `Role ${role} is not assigned to user ${userId}.` });
-        return;
+        db.create(userId, role).then(() => res.end()).catch(errHandler);
       }
-      response.status(200).send();
     });
-    app.delete('/rbac/assignments/:userId', (request, response) => {
-      const { userId } = request.params;
-      let i = rbacAssignments.length;
-      while (i--) {
-        if (rbacAssignments[i].userId === userId) {
-          rbacAssignments.splice(i, 1);
-        }
-      }
-      response.status(200).send();
+    app.get('/rbac/assignments', (_req, res) => {
+      db.load().then(entries => res.json(entries)).catch(newErrHandler(res));
+    });
+    app.get('/rbac/assignments/:userId/:role', (req, res) => {
+      db.find(req.params.userId, req.params.role).then(entries => res.json(entries)).catch(newErrHandler(res));
+    });
+    app.get('/rbac/assignments/:userId', (req, res) => {
+      db.findByUserId(req.params.userId).then(entry => res.json(entry)).catch(newErrHandler(res));
+    });
+    app.delete('/rbac/assignments/:userId/:role', (req, res) => {
+      db.delete(req.params.userId, req.params.role).then(entry => res.json(entry)).catch(newErrHandler(res));
+    });
+    app.delete('/rbac/assignments/:userId', (req, res) => {
+      db.deleteByUser(req.params.userId).then(entry => res.json(entry)).catch(newErrHandler(res));
     });
   });
 
@@ -74,84 +63,82 @@ describe('RbacHttpAssignmentAdapter', () => {
     server.close(done);
   });
 
-  it('should load data via http', async () => {
-    const response = await assignmentAdapter.load();
-    assert.deepEqual(response, rbacAssignments);
+  const adapter: RbacAssignmentAdapter = new RbacHttpAssignmentAdapter({ client });
+
+  const $ = {
+    alexey: new RbacAssignment({ userId: 'alexey', role: 'admin' }),
+    ilya: new RbacAssignment({ userId: 'ilya', role: 'manager' }),
+    igor: new RbacAssignment({ userId: 'igor', role: 'manager' }),
+  }
+
+  it('should store many and load them', async () => {
+    const values = [$.alexey, $.ilya];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    assert.deepEqual(entries, values);
   });
 
-  it('should store data over http', async () => {
-    const response = await assignmentAdapter.store(rbacAssignments);
-    assert.deepEqual(response.rbacAssignments, rbacAssignments);
+  it('should create one and find it', async () => {
+    await adapter.create($.igor.userId, $.igor.role);
+    const entry = await adapter.find($.igor.userId, $.igor.role);
+    assert.deepEqual(entry, $.igor);
   });
 
-  it('should create user assignment', async () => {
-    const assignment = { userId: 'alexey', role: 'admin' };
-    const response = await assignmentAdapter.create(assignment.userId, assignment.role);
-    assert.deepEqual(response, assignment);
+  it('should find many by user', async () => {
+    const entries = await adapter.findByUserId($.igor.userId);
+    assert.deepEqual(entries, [$.igor]);
   });
 
-  it('should find assignments by user', async () => {
-    const assignments = [{ userId: 'alexey', role: 'admin' }];
-    const response = await assignmentAdapter.findByUserId('alexey');
-    assert.deepEqual(response, assignments);
+  it('should delete one and be unable to find it', async () => {
+    await adapter.delete($.igor.userId, $.igor.role);
+    const entry = await adapter.find($.igor.userId, $.igor.role);
+    assert.deepEqual(entry, null);
+    const all = await adapter.load();
+    assert.deepEqual(all, [$.alexey, $.ilya]);
   });
 
-  it('should not delete missing assignment', async () => {
-    const assignment = { userId: 'alexey', role: 'user' };
+  it('should not delete missing one', async () => {
     try {
-      await assignmentAdapter.delete(assignment.userId, assignment.role);
+      await adapter.delete($.igor.userId, $.igor.role);
     } catch (error: any) {
-      assert.deepEqual(error.message, `Role ${assignment.role} is not assigned to user ${assignment.userId}.`);
+      assert.deepEqual(error.message, `No assignment between ${$.igor.userId} and ${$.igor.role} was found.`);
     }
   });
 
-  it('should delete assignment', async () => {
-    const assignment = { userId: 'alexey', role: 'admin' };
-    await assignmentAdapter.delete(assignment.userId, assignment.role);
-    assert.deepEqual(rbacAssignments.length, 1);
-  });
-
-  it('should delete all user assignment', async () => {
-    const assignment = { userId: 'ilya', role: 'manager' };
-    await assignmentAdapter.deleteByUser(assignment.userId);
-    assert.deepEqual(rbacAssignments.length, 0);
+  it('should delete many by user', async () => {
+    await adapter.deleteByUser($.alexey.userId);
+    const all = await adapter.load();
+    assert.deepEqual(all, [$.ilya]);
   });
 });
 
-describe('RbacHttpItemAdapter', () => {
-  const rbacItems: RbacItem[] = [
-    { name: 'admin', type: 'role' },
-    { name: 'manager', type: 'role' },
-    { name: 'user', type: 'role' },
-    { name: 'updateProfile', type: 'permission' },
-    { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
-  ];
-  const itemAdapter: RbacItemAdapter = new RbacHttpItemAdapter({ client });
+describe('RbacHttpItemAdapter', function() {
+  this.timeout(timeout);
+
   let server: http.Server;
 
   before(async () => {
     const app = express();
     server = app.listen(4001);
     app.use(express.json());
-    app.post('/rbac/items', (request, response) => {
-      if (request.body.name) {
-        const { name } = request.body;
-        if (rbacItems.find(item => item.name === name)) {
-          response.status(400).json({ message: `Item ${name} already exists.` });
-          return;
-        }
+    const db = new RbacInMemoryItemAdapter();
+    app.post('/rbac/items', (req, res) => {
+      const errHandler = newErrHandler(res);
+      const { rbacItems, name, type, rule } = req.body;
+      if (rbacItems) {
+        db.store(rbacItems).then(() => res.end()).catch(errHandler);
+      } else {
+        db.create(name, type, rule).then(() => res.end()).catch(errHandler);
       }
-      response.json(request.body);
     });
-    app.get('/rbac/items', (request, response) => {
-      response.json(rbacItems);
+    app.get('/rbac/items', (_req, res) => {
+      db.load().then(entries => res.json(entries)).catch(newErrHandler(res));
     });
-    app.get('/rbac/items/roles', (request, response) => {
-      response.json(rbacItems.filter(item => item.type === 'role'));
+    app.get('/rbac/items/roles', (_req, res) => {
+      db.findByType('role').then(entries => res.json(entries)).catch(newErrHandler(res));
     });
-    app.get('/rbac/items/:name', (request, response) => {
-      const { name } = request.params;
-      response.json(rbacItems.find(item => item.name === name));
+    app.get('/rbac/items/:name', (req, res) => {
+      db.find(req.params.name).then(entry => res.json(entry)).catch(newErrHandler(res));
     });
   });
 
@@ -159,84 +146,72 @@ describe('RbacHttpItemAdapter', () => {
     server.close(done);
   });
 
-  it('should load data via http', async () => {
-    const response = await itemAdapter.load();
-    assert.deepEqual(response, rbacItems);
+  const adapter: RbacItemAdapter = new RbacHttpItemAdapter({ client });
+
+  const $ = {
+    admin: new RbacItem({ name: 'admin', type: 'role' }),
+    manager: new RbacItem({ name: 'manager', type: 'role' }),
+    user: new RbacItem({ name: 'user', type: 'role' }),
+    updateProfile: new RbacItem({ name: 'updateProfile', type: 'permission' }),
+    updateOwnProfile: new RbacItem({ name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }),
+    regionManager: new RbacItem({ name: 'region manager', type: 'role' }),
+  }
+
+  it('should store many and load them', async () => {
+    const values = [$.admin, $.manager, $.user, $.updateProfile, $.updateOwnProfile];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    assert.deepEqual(entries, values);
   });
 
-  it('should store data over http', async () => {
-    const response = await itemAdapter.store(rbacItems);
-    assert.deepEqual(response.rbacItems, rbacItems);
+  it('should create one and find it', async () => {
+    await adapter.create($.regionManager.name, $.regionManager.type, $.regionManager.rule);
+    const entry = await adapter.find($.regionManager.name);
+    assert.deepEqual(entry, $.regionManager);
   });
 
-  it('should not create existing item', async () => {
-    const item: RbacItem = { name: 'updateOwnProfile', type: 'permission', rule: 'IsAuthor' };
+  it('should not create existing one', async () => {
     try {
-      await itemAdapter.create(item.name, item.type, item.rule);
+      await adapter.create($.regionManager.name, $.regionManager.type, $.regionManager.rule);
       assert.fail('Should throw on create.');
     } catch (error: any) {
-      assert.equal(error.message, `Item ${item.name} already exists.`)
+      assert.equal(error.message, `Item ${$.regionManager.name} already exists.`);
     }
   });
-
-  it('should create item', async () => {
-    const item: RbacItem = { name: 'updateOwnPost', type: 'permission', rule: 'IsAuthor' };
-    const response = await itemAdapter.create(item.name, item.type, item.rule);
-    assert.deepEqual(response, item);
-  });
-
-  it('should find item by name', async () => {
-    const item = { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' };
-    const response = await itemAdapter.find('updateOwnProfile');
-    assert.deepEqual(response, item);
-  });
-
 
   it('should find all roles', async () => {
-    const items = [
-      { name: 'admin', type: 'role' },
-      { name: 'manager', type: 'role' },
-      { name: 'user', type: 'role' }
-    ];
-    const response = await itemAdapter.findByType('role');
-    assert.deepEqual(response, items);
+    const entries = await adapter.findByType('role');
+    assert.deepEqual(entries, [$.admin, $.manager, $.user, $.regionManager]);
   });
 });
 
-describe('RbacHttpItemChildAdapter', () => {
-  const rbacItemChildren: RbacItemChild[] = [
-    { parent: 'admin', child: 'manager' },
-    { parent: 'manager', child: 'user' },
-    { parent: 'user', child: 'updateOwnProfile' },
-    { parent: 'updateOwnProfile', child: 'updateProfile' },
-    { parent: 'admin', child: 'updateProfile' }
-  ];
-  const itemChildAdapter: RbacItemChildAdapter = new RbacHttpItemChildAdapter({ client });
+describe('RbacHttpItemChildAdapter', function() {
+  this.timeout(timeout);
+
   let server: http.Server;
 
   before(async () => {
     const app = express();
     server = app.listen(4001);
     app.use(express.json());
-    app.post('/rbac/item-children', (request, response) => {
-      if (request.body.parent) {
-        const { parent, child } = request.body;
-        if (rbacItemChildren.find(itemChild => itemChild.parent === parent && itemChild.child === child)) {
-          response.status(400).json({ message: `Association of ${parent} and ${child} already exists.` });
-          return;
-        }
-        response.status(200).json(request.body);
-      }
-      if (request.body.rbacItemChildren) {
-        response.status(200).json(request.body);
+    const db = new RbacInMemoryItemChildAdapter();
+    app.post('/rbac/item-children', (req, res) => {
+      const errHandler = newErrHandler(res);
+      const { rbacItemChildren, parent, child } = req.body;
+      if (rbacItemChildren) {
+        db.store(rbacItemChildren).then(() => res.end()).catch(errHandler);
+      } else {
+        db.create(parent, child).then(() => res.end()).catch(errHandler);
       }
     });
-    app.get('/rbac/item-children', (request, response) => {
-      response.json(rbacItemChildren);
+    app.get('/rbac/item-children', (_req, res) => {
+      db.load().then(entries => res.json(entries)).catch(newErrHandler(res));
     });
-    app.get('/rbac/item-children/:parent', (request, response) => {
-      const { parent } = request.params;
-      response.json(rbacItemChildren.filter(itemChild => itemChild.parent === parent));
+    app.get('/rbac/item-children/:parent/:child', (req, res) => {
+      db.find(req.params.parent, req.params.child).then(entries => res.json(entries)).catch(newErrHandler(res));
+    });
+    app.get('/rbac/item-children/:parent', (req, res) => {
+      db.findByParent(req.params.parent).then(entry => res.json(entry)).catch(newErrHandler(res));
     });
   });
 
@@ -244,65 +219,66 @@ describe('RbacHttpItemChildAdapter', () => {
     server.close(done);
   });
 
-  it('should load data via http', async () => {
-    const response = await itemChildAdapter.load();
-    assert.deepEqual(response, rbacItemChildren);
+  const adapter: RbacItemChildAdapter = new RbacHttpItemChildAdapter({ client });
+
+  const $ = {
+    admin_manager: new RbacItemChild({ parent: 'admin', child: 'manager' }),
+    manager_user: new RbacItemChild({ parent: 'manager', child: 'user' }),
+    user_updateOwnProfile: new RbacItemChild({ parent: 'user', child: 'updateOwnProfile' }),
+    updateOwnProfile_updateProfile: new RbacItemChild({ parent: 'updateOwnProfile', child: 'updateProfile' }),
+    admin_updateProfile: new RbacItemChild({ parent: 'admin', child: 'updateProfile' }),
+    manager_regionManager: new RbacItemChild({ parent: 'manager', child: 'region manager' }),
+  }
+
+  it('should store many and load them', async () => {
+    const values = [
+      $.admin_manager,
+      $.manager_user,
+      $.user_updateOwnProfile,
+      $.updateOwnProfile_updateProfile,
+      $.admin_updateProfile,
+    ]
+    await adapter.store(values);
+    const entries = await adapter.load();
+    assert.deepEqual(entries, values);
   });
 
-  it('should store data over http', async () => {
-    const response = await itemChildAdapter.store(rbacItemChildren);
-    assert.deepEqual(response.rbacItemChildren, rbacItemChildren);
+  it('should create one and find it', async () => {
+    await adapter.create($.manager_regionManager.parent, $.manager_regionManager.child);
+    const entry = await adapter.find($.manager_regionManager.parent, $.manager_regionManager.child);
+    assert.deepEqual(entry, $.manager_regionManager);
   });
 
-  it('should not create existing item child', async () => {
-    const itemChild = { parent: 'admin', child: 'manager' };
-    try {
-      const response = await itemChildAdapter.create(itemChild.parent, itemChild.child);
-      assert.fail('Should throw on create.');
-    } catch (error: any) {
-      assert.equal(error.message, `Association of ${itemChild.parent} and ${itemChild.child} already exists.`);
-    }
-  });
-
-  it('should create item child', async () => {
-    const itemChild = { parent: 'admin', child: 'user' };
-    const response = await itemChildAdapter.create(itemChild.parent, itemChild.child);
-    assert.deepEqual(response, itemChild);
-  });
-
-  it('should find item children by parent', async () => {
-    const itemChildren = [{ parent: 'user', child: 'updateOwnProfile' }]
-    const response = await itemChildAdapter.findByParent('user');
-    assert.deepEqual(response, itemChildren);
+  it('should find many by parent', async () => {
+    const entries = await adapter.findByParent($.admin_manager.parent);
+    assert.deepEqual(entries, [$.admin_manager, $.admin_updateProfile]);
   });
 });
 
-describe('RbacHttpRuleAdapter', () => {
-  const rbacRules: RbacRule[] = [
-    { name: 'IsOwnProfile' }
-  ];
-  const ruleAdapter: RbacRuleAdapter = new RbacHttpRuleAdapter({ client });
+describe('RbacHttpRuleAdapter', function() {
+  this.timeout(timeout);
+
   let server: http.Server;
 
   before(async () => {
     const app = express();
     server = app.listen(4001);
     app.use(express.json());
-    app.get('/rbac/rules', (request, response) => {
-      response.json(rbacRules);
+    const db = new RbacInMemoryRuleAdapter();
+    app.post('/rbac/rules', (req, res) => {
+      const errHandler = newErrHandler(res);
+      const { rbacRules, name } = req.body;
+      if (rbacRules) {
+        db.store(rbacRules).then(() => res.end()).catch(errHandler);
+      } else {
+        db.create(name).then(() => res.end()).catch(errHandler);
+      }
     });
-    app.post('/rbac/rules', (request, response) => {
-      if (request.body.name) {
-        const { name } = request.body;
-        if (rbacRules.find(itemChild => itemChild.name === name)) {
-          response.status(400).json({ message: `Rule ${name} already exists.` });
-          return;
-        }
-        response.status(200).json(request.body);
-      }
-      if (request.body.rbacRules) {
-        response.status(200).json(request.body);
-      }
+    app.get('/rbac/rules', (_req, res) => {
+      db.load().then(entries => res.json(entries)).catch(newErrHandler(res));
+    });
+    app.get('/rbac/rules/:name', (req, res) => {
+      db.find(req.params.name).then(entry => res.json(entry)).catch(newErrHandler(res));
     });
   });
 
@@ -310,44 +286,41 @@ describe('RbacHttpRuleAdapter', () => {
     server.close(done);
   });
 
-  it('should load data via http', async () => {
-    const response = await ruleAdapter.load();
-    assert.deepEqual(response, rbacRules);
+  const adapter: RbacRuleAdapter = new RbacHttpRuleAdapter({ client });
+  
+  const $ = {
+    IsOwnProfile: new RbacRule({ name: 'IsOwnProfile' }),
+    IsOwnDocument: new RbacRule({ name: 'IsOwnDocument' }),
+    IsGroupLeader: new RbacRule({ name: 'IsGroupLeader' }),
+  };
+
+  it('should store many and load them', async () => {
+    const values = [$.IsOwnProfile, $.IsOwnDocument];
+    await adapter.store(values);
+    const entries = await adapter.load();
+    assert.deepEqual(entries, values);
   });
 
-  it('should store data over http', async () => {
-    const response = await ruleAdapter.store(rbacRules);
-    assert.deepEqual(response.rbacRules, rbacRules);
-  });
-
-  it('should not create existing item child', async () => {
-    const rule = { name: 'IsOwnProfile' };
-    try {
-      const response = await ruleAdapter.create(rule.name);
-      assert.fail('Should throw on create.');
-    } catch (error: any) {
-      assert.equal(error.message, `Rule ${rule.name} already exists.`);
-    }
-  });
-
-  it('should create item child', async () => {
-    const rule = { name: 'IsOwnPost' };
-    const response = await ruleAdapter.create(rule.name);
-    assert.deepEqual(response, rule);
+  it('should create one and find it', async () => {
+    await adapter.create($.IsGroupLeader.name);
+    const entry = await adapter.find($.IsGroupLeader.name);
+    assert.deepEqual(entry, $.IsGroupLeader);
   });
 });
 
-describe('RbacHttpAdapter', () => {
+describe('RbacHttpAdapter', function() {
+  this.timeout(timeout);
+  
   const rbacAssignments: RbacAssignment[] = [
     { userId: 'alexey', role: 'admin' },
     { userId: 'ilya', role: 'manager' }
   ];
   const rbacItems = [
-    { name: 'admin', type: 'role' },
-    { name: 'manager', type: 'role' },
-    { name: 'user', type: 'role' },
-    { name: 'updateProfile', type: 'permission' },
-    { name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' },
+    new RbacItem({ name: 'admin', type: 'role' }),
+    new RbacItem({ name: 'manager', type: 'role' }),
+    new RbacItem({ name: 'user', type: 'role' }),
+    new RbacItem({ name: 'updateProfile', type: 'permission' }),
+    new RbacItem({ name: 'updateOwnProfile', type: 'permission', rule: 'IsOwnProfile' }),
   ];
   const rbacItemChildren = [
     { parent: 'admin', child: 'manager' },

@@ -13,8 +13,7 @@ export default class RbacPostgresRuleAdapter implements RbacRuleAdapter {
 
   async store(values: RbacRule[]) {
     await RbacRuleModel.query().delete();
-    const entries = await RbacRuleModel.query().insert(values);
-    return entries.map(x => x.toJSON());
+    await RbacRuleModel.query().insert(values);
   }
 
   async load() {
@@ -26,7 +25,11 @@ export default class RbacPostgresRuleAdapter implements RbacRuleAdapter {
     if (await RbacRuleModel.query().findById(name)) {
       throw new Error(`Rule ${name} already exists.`);
     }
-    const entry = await RbacRuleModel.query().insert({ name });
-    return entry.toJSON();
+    await RbacRuleModel.query().insert({ name });
+  }
+
+  async find(name: RbacRule['name']) {
+    const entry = await RbacRuleModel.query().findById([name]);
+    return entry == null ? null : new RbacRule(entry);
   }
 }

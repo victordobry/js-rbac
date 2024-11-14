@@ -2,7 +2,9 @@ import { Model } from 'objection';
 
 import { RbacAssignment } from '@brainstaff/rbac';
 
-interface RbacAssignmentModel extends RbacAssignment {}
+import { ModelOf } from '../utils/model-of';
+
+interface RbacAssignmentModel extends ModelOf<RbacAssignment> {}
 
 class RbacAssignmentModel extends Model {
   static get tableName() {

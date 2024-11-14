@@ -13,8 +13,7 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async store(values: RbacItem[]) {
     try {
-      const res = await this.client.post(`/rbac/items`, { rbacItems: values });
-      return res.data;
+      await this.client.post(`/rbac/items`, { rbacItems: values });
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -39,8 +38,7 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
     try {
-      const res = await this.client.post(`/rbac/items`, { name, type, rule });
-      return res.data;
+      await this.client.post(`/rbac/items`, { name, type, rule });
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
