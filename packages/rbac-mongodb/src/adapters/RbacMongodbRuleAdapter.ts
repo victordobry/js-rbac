@@ -3,16 +3,17 @@ import { RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
 import RbacRuleModel from '../models/RbacRule';
 
 export default class RbacMongodbRuleAdapter implements RbacRuleAdapter {
-  async store(rbacRules: RbacRule[]) {
+  async store(values: RbacRule[]) {
     await RbacRuleModel.deleteMany({});
-    return await RbacRuleModel.create(rbacRules);
+    return RbacRuleModel.create(values);
   }
 
   async load() {
-    return await RbacRuleModel.find({});
+    const entries = await RbacRuleModel.find({});
+    return entries.map(x => new RbacRule(x));
   }
 
   async create(name: RbacRule['name']) {
-    return await RbacRuleModel.create({ name });
+    return RbacRuleModel.create({ name });
   }
 }

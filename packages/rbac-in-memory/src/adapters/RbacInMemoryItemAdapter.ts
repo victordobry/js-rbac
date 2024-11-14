@@ -1,28 +1,28 @@
 import { RbacItem, RbacItemAdapter, RbacRule } from "@brainstaff/rbac";
 
 export default class RbacInMemoryItemAdapter implements RbacItemAdapter {
-  private rbacItems: RbacItem[] = [];
+  private entries: RbacItem[] = [];
 
-  async store(rbacItems: RbacItem[]) {
-    this.rbacItems = [...rbacItems];
+  async store(values: RbacItem[]) {
+    this.entries = values.map(x => new RbacItem(x));
   }
 
   async load() {
-    return this.rbacItems;
+    return this.entries;
   }
 
   async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
-    if (this.rbacItems.find(item => item.name === name)) {
+    if (this.entries.find(x => x.name === name)) {
       throw new Error(`Item ${name} already exists.`);
     }
-    this.rbacItems.push({ name, type, rule });
+    this.entries.push(new RbacItem({ name, type, rule }));
   }
 
   async find(name: RbacItem['name']) {
-    return this.rbacItems.find(rbacItem => rbacItem.name === name);
+    return this.entries.find(x => x.name === name) ?? null;
   }
 
   async findByType(type: RbacItem['type']) {
-    return this.rbacItems.filter(rbacItem => rbacItem.type === type);
+    return this.entries.filter(x => x.type === type);
   }
 }

@@ -11,23 +11,22 @@ export default class RbacPostgresRuleAdapter implements RbacRuleAdapter {
     RbacRuleModel.knex(deps.client);
   }
 
-  async store(rbacRules: RbacRule[]) {
+  async store(values: RbacRule[]) {
     await RbacRuleModel.query().delete();
-    const rules = await RbacRuleModel.query().insert(rbacRules);
-    return rules.map(rule => rule.toJSON());
+    const entries = await RbacRuleModel.query().insert(values);
+    return entries.map(x => x.toJSON());
   }
 
   async load() {
-    const rules = await RbacRuleModel.query();
-    return rules.map(rule => rule.toJSON());
+    const entries = await RbacRuleModel.query();
+    return entries.map(x => new RbacRule(x));
   }
 
   async create(name: RbacRule['name']) {
-    let rule = await RbacRuleModel.query().findById(name);
-    if (rule) {
+    if (await RbacRuleModel.query().findById(name)) {
       throw new Error(`Rule ${name} already exists.`);
     }
-    rule = await RbacRuleModel.query().insert({ name });
-    return rule && rule.toJSON();
+    const entry = await RbacRuleModel.query().insert({ name });
+    return entry.toJSON();
   }
 }

@@ -4,7 +4,7 @@ export interface RbacAssignmentAdapter {
   store: (assignments: RbacAssignment[]) => Promise<any>;
   load: () => Promise<RbacAssignment[]>;
   create: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
-  find: (userId: RbacUserId, role: RbacItem['name']) => Promise<RbacAssignment | null | undefined>;
+  find: (userId: RbacUserId, role: RbacItem['name']) => Promise<RbacAssignment | null>;
   findByUserId: (userId: RbacUserId) => Promise<RbacAssignment[]>;
   delete: (userId: RbacUserId, role: RbacItem['name']) => Promise<any>;
   deleteByUser: (userId: RbacUserId) => Promise<any>;
@@ -14,7 +14,7 @@ export interface RbacItemAdapter {
   store: (items: RbacItem[]) => Promise<any>;
   load: () => Promise<RbacItem[]>;
   create: (name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) => Promise<any>;
-  find: (name: RbacItem['name']) => Promise<RbacItem | null | undefined>;
+  find: (name: RbacItem['name']) => Promise<RbacItem | null>;
   findByType: (type: RbacItem['type']) => Promise<RbacItem[]>;
 }
 

@@ -4,57 +4,54 @@ import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacUserId } from '@br
 
 import RbacAssignmentModel from '../models/RbacAssignment';
 
-class RbacPostgresAssignmentAdapter implements RbacAssignmentAdapter {
+export default class RbacPostgresAssignmentAdapter implements RbacAssignmentAdapter {
   constructor(deps: {
     client: Knex
   }) {
     RbacAssignmentModel.knex(deps.client);
   }
 
-  async store(rbacAssignments: RbacAssignment[]) {
+  async store(values: RbacAssignment[]) {
     await RbacAssignmentModel.query().delete();
-    const assignments = await RbacAssignmentModel.query().insert(rbacAssignments);
-    return assignments.map(assignment => assignment.toJSON());
+    const entries = await RbacAssignmentModel.query().insert(values);
+    return entries.map(x => x.toJSON());
   }
 
   async load() {
-    const assignments = await RbacAssignmentModel.query();
-    return assignments.map(assignment => assignment.toJSON());
+    const entries = await RbacAssignmentModel.query();
+    return entries.map(x => new RbacAssignment(x));
   }
 
   async create(userId: RbacUserId, role: RbacItem['name']) {
-    let assignment = await RbacAssignmentModel.query().findById([userId, role]);
-    if (assignment) {
+    if (await RbacAssignmentModel.query().findById([userId, role])) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
     }
-    assignment = await RbacAssignmentModel.query().insert({ userId: userId, role: role });
-    return assignment && assignment.toJSON();
+    const entry = await RbacAssignmentModel.query().insert({ userId, role });
+    return entry.toJSON();
   }
 
   async find(userId: RbacUserId, role: RbacItem['name']) {
-    const assignment = await RbacAssignmentModel.query().findById([userId, role]);
-    return assignment && assignment.toJSON();
+    const entry = await RbacAssignmentModel.query().findById([userId, role]);
+    return entry == null ? null : new RbacAssignment(entry);
   }
 
   async findByUserId(userId: RbacUserId) {
-    const assignments = await RbacAssignmentModel.query().where({ userId });
-    return assignments.map(assignment => assignment.toJSON());
+    const entries = await RbacAssignmentModel.query().where({ userId });
+    return entries.map(x => new RbacAssignment(x));
   }
 
   async delete(userId: RbacUserId, role: RbacItem['name']) {
-    const assignment = await RbacAssignmentModel.query().findById([userId, role]);
-    if (!assignment) {
+    const entry = await RbacAssignmentModel.query().findById([userId, role]);
+    if (!entry) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
     }
     await RbacAssignmentModel.query().deleteById([userId, role]);
-    return assignment.toJSON();
+    return entry.toJSON();
   }
 
   async deleteByUser(userId: RbacUserId) {
-    const assignments = await RbacAssignmentModel.query().where({ userId });
+    const entry = await RbacAssignmentModel.query().where({ userId });
     await RbacAssignmentModel.query().where({ userId }).delete();
-    return assignments.map(assignment => assignment.toJSON());
+    return entry.map(x => x.toJSON());
   }
 }
-
-export default RbacPostgresAssignmentAdapter;

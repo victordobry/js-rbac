@@ -11,10 +11,10 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
     this.client = deps.client;
   }
 
-  async store(rbacItemChildren: RbacItemChild[]) {
+  async store(values: RbacItemChild[]) {
     try {
-      const response = await this.client.post(`/rbac/item-children`, { rbacItemChildren });
-      return response.data;
+      const res = await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -26,8 +26,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
 
   async load() {
     try {
-      const response = await this.client.get(`/rbac/item-children`);
-      return response.data;
+      const res = await this.client.get(`/rbac/item-children`);
+      return res.data.map((x: any) => new RbacItemChild(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -39,8 +39,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
 
   async create(parent: RbacItem['name'], child: RbacItem['name']) {
     try {
-      const response = await this.client.post(`/rbac/item-children`, { parent, child });
-      return response.data;
+      const res = await this.client.post(`/rbac/item-children`, { parent, child });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -52,8 +52,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
 
   async findByParent(parent: RbacItem['name']) {
     try {
-      const response = await this.client.get(`/rbac/item-children/${parent}`);
-      return response.data;
+      const res = await this.client.get(`/rbac/item-children/${parent}`);
+      return res.data.map((x: any) => new RbacItemChild(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);

@@ -3,40 +3,43 @@ import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacUserId } from '@br
 import RbacAssignmentModel from '../models/RbacAssignment';
 
 export default class RbacMongodbAssignmentAdapter implements RbacAssignmentAdapter {
-  async store(rbacAssignments: RbacAssignment[]) {
+  async store(values: RbacAssignment[]) {
     await RbacAssignmentModel.deleteMany({});
-    return await RbacAssignmentModel.create(rbacAssignments);
+    return RbacAssignmentModel.create(values);
   }
 
   async load() {
-    return await RbacAssignmentModel.find({});
+    const entries = await RbacAssignmentModel.find({});
+    return entries.map(x => new RbacAssignment(x));
   }
 
   async create(userId: RbacUserId, role: RbacItem['name']) {
-    const currentRole = await RbacAssignmentModel.findOne({ userId: userId, role: role });
-    if (currentRole) {
+    if (await RbacAssignmentModel.exists({ userId, role })) {
       throw new Error(`Role ${role} is already assigned to user ${userId}.`);
     }
-    return await RbacAssignmentModel.create({ userId: userId, role: role });
+    return RbacAssignmentModel.create(new RbacAssignment({ userId, role }));
   }
 
   async find(userId: RbacUserId, role: RbacItem['name']) {
-    return await RbacAssignmentModel.findOne({ userId: userId, role: role });
+    const entry = await RbacAssignmentModel.findOne({ userId, role });
+    return entry == null ? null : new RbacAssignment(entry);
   }
 
   async findByUserId(userId: RbacUserId) {
-    return await RbacAssignmentModel.find({ userId: userId });
+    const entry = await RbacAssignmentModel.find({ userId });
+    return entry.map(x => new RbacAssignment(x));
   }
 
   async delete(userId: RbacUserId, role: RbacItem['name']) {
-    const currentRole = await RbacAssignmentModel.findOne({ userId: userId, role: role });
-    if (!currentRole) {
+    const entry = await RbacAssignmentModel.findOne({ userId, role });
+    if (!entry) {
       throw new Error(`No assignment between ${userId} and ${role} was found.`);
     }
-    return await RbacAssignmentModel.findByIdAndDelete(currentRole._id);
+    await RbacAssignmentModel.findByIdAndDelete(entry._id);
+    return entry;
   }
 
   async deleteByUser(userId: RbacUserId) {
-    return await RbacAssignmentModel.deleteMany({ userId });
+    return RbacAssignmentModel.deleteMany({ userId });
   }
 }

@@ -11,10 +11,10 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
     this.client = deps.client;
   }
 
-  async store(rbacAssignments: RbacAssignment[]) {
+  async store(values: RbacAssignment[]) {
     try {
-      const response = await this.client.post(`/rbac/assignments`, { rbacAssignments });
-      return response.data;
+      const res = await this.client.post(`/rbac/assignments`, { rbacAssignments: values });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -26,8 +26,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async load() {
     try {
-      const response = await this.client.get(`/rbac/assignments`);
-      return response.data;
+      const res = await this.client.get(`/rbac/assignments`);
+      return res.data.map((x: any) => new RbacAssignment(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -39,8 +39,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async create(userId: RbacUserId, role: RbacItem['name']) {
     try {
-      const response = await this.client.post(`/rbac/assignments`, { userId, role });
-      return response.data;
+      const res = await this.client.post(`/rbac/assignments`, { userId, role });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -52,8 +52,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async find(userId: RbacUserId, role: RbacItem['name']) {
     try {
-      const response = await this.client.get(`/rbac/assignments/${userId}/${role}`);
-      return response.data;
+      const res = await this.client.get(`/rbac/assignments/${userId}/${role}`);
+      return res.data == null ? null : new RbacAssignment(res.data);
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -65,8 +65,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async findByUserId(userId: RbacUserId) {
     try {
-      const response = await this.client.get(`/rbac/assignments/${userId}`);
-      return response.data;
+      const res = await this.client.get(`/rbac/assignments/${userId}`);
+      return res.data.map((x: any) => new RbacAssignment(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -78,8 +78,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async delete(userId: RbacUserId, role: RbacItem['name']) {
     try {
-      const response = await this.client.delete(`/rbac/assignments/${userId}/${role}`);
-      return response.data;
+      const res = await this.client.delete(`/rbac/assignments/${userId}/${role}`);
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -91,8 +91,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
 
   async deleteByUser(userId: RbacUserId) {
     try {
-      const response = await this.client.delete(`/rbac/assignments/${userId}`);
-      return response.data;
+      const res = await this.client.delete(`/rbac/assignments/${userId}`);
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);

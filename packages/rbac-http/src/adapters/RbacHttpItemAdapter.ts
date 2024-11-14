@@ -1,5 +1,6 @@
-import { RbacItem, RbacItemAdapter, RbacRule } from '@brainstaff/rbac';
 import { AxiosInstance } from 'axios';
+
+import { RbacItem, RbacItemAdapter, RbacRule } from '@brainstaff/rbac';
 
 export default class RbacHttpItemAdapter implements RbacItemAdapter {
   private client: AxiosInstance;
@@ -10,10 +11,10 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
     this.client = deps.client;
   }
 
-  async store(rbacItems: RbacItem[]) {
+  async store(values: RbacItem[]) {
     try {
-      const response = await this.client.post(`/rbac/items`, { rbacItems });
-      return response.data;
+      const res = await this.client.post(`/rbac/items`, { rbacItems: values });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -25,8 +26,8 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async load() {
     try {
-      const response = await this.client.get(`/rbac/items`);
-      return response.data;
+      const res = await this.client.get(`/rbac/items`);
+      return res.data.map((x: any) => new RbacItem(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -38,8 +39,8 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
     try {
-      const response = await this.client.post(`/rbac/items`, { name, type, rule });
-      return response.data;
+      const res = await this.client.post(`/rbac/items`, { name, type, rule });
+      return res.data;
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -51,8 +52,8 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async find(name: RbacItem['name']) {
     try {
-      const response = await this.client.get(`/rbac/items/${name}`);
-      return response.data;
+      const res = await this.client.get(`/rbac/items/${name}`);
+      return res.data == null ? null : new RbacItem(res.data);
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);
@@ -64,8 +65,8 @@ export default class RbacHttpItemAdapter implements RbacItemAdapter {
 
   async findByType(type: RbacItem['type']) {
     try {
-      const response = await this.client.get(`/rbac/items/${type}s`);
-      return response.data;
+      const res = await this.client.get(`/rbac/items/${type}s`);
+      return res.data.map((x: any) => new RbacItem(x));
     } catch (error: any) {
       if (error.response.data.message) {
         throw new Error(error.response.data.message);

@@ -1,24 +1,24 @@
 import { RbacItem, RbacItemChild, RbacItemChildAdapter } from "@brainstaff/rbac";
 
 export default class RbacInMemoryItemChildAdapter implements RbacItemChildAdapter {
-  private rbacItemChildren: RbacItemChild[] = [];
+  private entries: RbacItemChild[] = [];
 
-  async store(rbacItemChildren: RbacItemChild[]) {
-    this.rbacItemChildren = [...rbacItemChildren];
+  async store(values: RbacItemChild[]) {
+    this.entries = values.map(x => new RbacItemChild(x));
   }
 
   async load() {
-    return this.rbacItemChildren;
+    return this.entries;
   }
 
   async create(parent: RbacItem['name'], child: RbacItem['name']) {
-    if (this.rbacItemChildren.find(itemChild => itemChild.parent === parent && itemChild.child === child)) {
+    if (this.entries.find(x => x.parent === parent && x.child === child)) {
       throw new Error(`Association of ${parent} and ${child} already exists.`);
     }
-    this.rbacItemChildren.push({ parent, child });
+    this.entries.push(new RbacItemChild({ parent, child }));
   }
 
   async findByParent(parent: RbacItem['name']) {
-    return this.rbacItemChildren.filter(rbacItemChild => rbacItemChild.parent === parent);
+    return this.entries.filter(x => x.parent === parent);
   }
 }

@@ -10,33 +10,32 @@ export default class RbacPostgresItemAdapter implements RbacItemAdapter {
     RbacItemModel.knex(deps.client);
   }
 
-  async store(rbacItems: RbacItem[]) {
+  async store(values: RbacItem[]) {
     await RbacItemModel.query().delete();
-    const items = await RbacItemModel.query().insert(rbacItems);
-    return items.map(assignment => assignment.toJSON());
+    const entries = await RbacItemModel.query().insert(values);
+    return entries.map(x => x.toJSON());
   }
 
   async load() {
-    const items = await RbacItemModel.query();
-    return items.map(assignment => assignment.toJSON());
+    const entries = await RbacItemModel.query();
+    return entries.map(x => new RbacItem(x));
   }
 
   async create(name: RbacItem['name'], type: RbacItem['type'], rule?: RbacRule['name']) {
-    let item = await RbacItemModel.query().findOne({ name });
-    if (item) {
+    if (await RbacItemModel.query().findOne({ name })) {
       throw new Error(`Item ${name} already exists.`);
     }
-    item = await RbacItemModel.query().insert({ name, type, rule });
-    return item && item.toJSON();
+    const entry = await RbacItemModel.query().insert({ name, type, rule });
+    return entry.toJSON();
   }
 
   async find(name: RbacItem['name']) {
-    const item = await RbacItemModel.query().findById(name);
-    return item && item.toJSON();
+    const value = await RbacItemModel.query().findById(name);
+    return value == null ? null : new RbacItem(value);
   }
 
   async findByType(type: RbacItem['type']) {
-    const items = await RbacItemModel.query().where({ type });
-    return items.map(item => item.toJSON());
+    const entries = await RbacItemModel.query().where({ type });
+    return entries.map(x => new RbacItem(x));
   }
 }

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChildAdapter, RbacRuleAdapter } from '@brainstaff/rbac';
+import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChild, RbacItemChildAdapter, RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
 
 import { RbacMongodbAssignmentAdapter } from '../src/index.js';
 import { RbacMongodbItemAdapter } from '../src/index.js';
@@ -57,12 +57,11 @@ before(async () => {
 after(() => mongooseConnection.disconnect());
 
 describe('RbacMongodbAssignmentAdapter', () => {
-  const rbacAssignments = [
+  const rbacAssignments: RbacAssignment[] = [
     { userId: 'alexey', role: 'admin' },
     { userId: 'ilya', role: 'manager' }
   ];
-
-  const rbacAssignmet = { userId: 'igor', role: 'manager' };
+  const rbacAssignmet: RbacAssignment = { userId: 'igor', role: 'manager' };
 
   it('should store many assignments', async () => {
     const adapter: RbacAssignmentAdapter = new RbacMongodbAssignmentAdapter();
@@ -171,14 +170,14 @@ describe('RbacMongodbItemAdapter', () => {
 });
 
 describe('RbacMongodbItemChildAdapter', () => {
-  const rbacItemChildren = [
+  const rbacItemChildren: RbacItemChild[] = [
     { parent: 'admin', child: 'manager' },
     { parent: 'manager', child: 'user' },
     { parent: 'user', child: 'updateOwnProfile' },
     { parent: 'updateOwnProfile', child: 'updateProfile' },
     { parent: 'admin', child: 'updateProfile' }
   ];
-  const rbacItemChild = { parent: 'manager', child: 'region manager' };
+  const rbacItemChild: RbacItemChild = { parent: 'manager', child: 'region manager' };
 
   it('should store many children items', async () => {
     const adapter: RbacItemChildAdapter = new RbacMongodbItemChildAdapter();
@@ -210,11 +209,11 @@ describe('RbacMongodbItemChildAdapter', () => {
 });
 
 describe('RbacMongodbRuleAdapter', () => {
-  const rbacRules = [
+  const rbacRules: RbacRule[] = [
     { name: 'IsOwnProfile' },
     { name: 'IsOwnDocument' }
   ];
-  const rbacRule = { name: 'IsGroupLeader' };
+  const rbacRule: RbacRule = { name: 'IsGroupLeader' };
 
   it('should store many rules', async () => {
     const adapter: RbacRuleAdapter = new RbacMongodbRuleAdapter();

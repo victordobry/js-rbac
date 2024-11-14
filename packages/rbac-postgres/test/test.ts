@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import knex from 'knex';
 
-import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChildAdapter, RbacRuleAdapter } from '@brainstaff/rbac';
+import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacItemAdapter, RbacItemChild, RbacItemChildAdapter, RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
 
 import { RbacPostgresAssignmentAdapter } from '../src/index.js';
 import { RbacPostgresItemAdapter } from '../src/index.js';
@@ -172,14 +172,14 @@ describe('RbacPostgresItemChildAdapter', async () => {
 
   const timeout = 3000;
 
-  const rbacItemChildren = [
+  const rbacItemChildren: RbacItemChild[] = [
     { parent: 'admin', child: 'manager' },
     { parent: 'manager', child: 'user' },
     { parent: 'user', child: 'updateOwnProfile' },
     { parent: 'updateOwnProfile', child: 'updateProfile' },
     { parent: 'admin', child: 'updateProfile' }
   ];
-  const rbacItemChild = { parent: 'manager', child: 'region manager' };
+  const rbacItemChild: RbacItemChild = { parent: 'manager', child: 'region manager' };
 
   it('should store many children items', async () => {
     const adapter: RbacItemChildAdapter = new RbacPostgresItemChildAdapter({ client });
@@ -213,11 +213,11 @@ describe('RbacPostgresItemChildAdapter', async () => {
 describe('RbacPostgresRuleAdapter', async () => {
   const { expect } = await import('chai');
 
-  const rbacRules = [
+  const rbacRules: RbacRule[] = [
     { name: 'IsOwnProfile' },
     { name: 'IsOwnDocument' }
   ];
-  const rbacRule = { name: 'IsGroupLeader' };
+  const rbacRule: RbacRule = { name: 'IsGroupLeader' };
 
   const timeout = 3000;
 
