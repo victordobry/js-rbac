@@ -20,7 +20,7 @@ const client = axios.create({
 const timeout = 10000;
 
 const newErrHandler = (res: express.Response) => {
-  return (err: any) => res.status(400).json({ message: err.message ?? 'No message.' });
+  return (err: unknown) => res.status(400).json({ message: err instanceof Error ? err.message : 'No message.' });
 };
 
 describe('RbacHttpAssignmentAdapter', function() {
@@ -100,8 +100,13 @@ describe('RbacHttpAssignmentAdapter', function() {
   it('should not delete missing one', async () => {
     try {
       await adapter.delete($.igor.userId, $.igor.role);
-    } catch (error: any) {
-      assert.deepEqual(error.message, `No assignment between ${$.igor.userId} and ${$.igor.role} was found.`);
+      assert.fail('Should throw error.');
+    } catch (err) {
+      if (err instanceof Error)  {
+        assert.deepEqual(err.message, `No assignment between ${$.igor.userId} and ${$.igor.role} was found.`);
+      } else {
+        assert.fail('Thrown error should inherit from Error.');
+      }
     }
   });
 
@@ -173,9 +178,13 @@ describe('RbacHttpItemAdapter', function() {
   it('should not create existing one', async () => {
     try {
       await adapter.create($.regionManager.name, $.regionManager.type, $.regionManager.rule);
-      assert.fail('Should throw on create.');
-    } catch (error: any) {
-      assert.equal(error.message, `Item ${$.regionManager.name} already exists.`);
+      assert.fail('Should throw error.');
+    } catch (err) {
+      if (err instanceof Error) {
+        assert.equal(err.message, `Item ${$.regionManager.name} already exists.`);
+      } else {
+        assert.fail('Thrown error should inherit from Error.');
+      }
     }
   });
 

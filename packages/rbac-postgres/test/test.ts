@@ -76,9 +76,13 @@ describe('RbacPostgresItemAdapter', function() {
     const adapter: RbacItemAdapter = new RbacPostgresItemAdapter({ client });
     try {
       await adapter.create($.regionManager.name, $.regionManager.type, $.regionManager.rule);
-      expect.fail('Should throw on create.');
-    } catch (error: any) {
-      expect(error.message).to.be.equal(`Item ${$.regionManager.name} already exists.`);
+      expect.fail('Should throw error.');
+    } catch (err) {
+      if (err instanceof Error) {
+        expect(err.message).to.be.equal(`Item ${$.regionManager.name} already exists.`);
+      } else {
+        expect.fail("Thrown error should inherit from Error.");
+      }
     }
   });
 
