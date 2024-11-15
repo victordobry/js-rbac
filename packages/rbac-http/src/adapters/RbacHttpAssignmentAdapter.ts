@@ -2,6 +2,8 @@ import {AxiosInstance} from 'axios';
 
 import { RbacAssignment, RbacAssignmentAdapter, RbacItem, RbacUserId } from '@brainstaff/rbac';
 
+import { rethrow } from '../utils/rethrow';
+
 export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter {
   private client: AxiosInstance;
 
@@ -14,12 +16,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
   async store(values: RbacAssignment[]) {
     try {
       await this.client.post(`/rbac/assignments`, { rbacAssignments: values });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -27,24 +25,16 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
     try {
       const res = await this.client.get(`/rbac/assignments`);
       return res.data.map((x: any) => new RbacAssignment(x));
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
   async create(userId: RbacUserId, role: RbacItem['name']) {
     try {
       await this.client.post(`/rbac/assignments`, { userId, role });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -52,12 +42,8 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
     try {
       const res = await this.client.get(`/rbac/assignments/${userId}/${role}`);
       return res.data == null ? null : new RbacAssignment(res.data);
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -65,36 +51,24 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
     try {
       const res = await this.client.get(`/rbac/assignments/${userId}`);
       return res.data.map((x: any) => new RbacAssignment(x));
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
   async delete(userId: RbacUserId, role: RbacItem['name']) {
     try {
       await this.client.delete(`/rbac/assignments/${userId}/${role}`);
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
   async deleteByUser(userId: RbacUserId) {
     try {
       await this.client.delete(`/rbac/assignments/${userId}`);
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 }

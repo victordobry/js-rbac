@@ -2,6 +2,8 @@ import { AxiosInstance } from 'axios';
 
 import { RbacRule, RbacRuleAdapter } from '@brainstaff/rbac';
 
+import { rethrow } from '../utils/rethrow';
+
 export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
   private client: AxiosInstance;
 
@@ -14,12 +16,8 @@ export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
   async store(values: RbacRule[]) {
     try {
       await this.client.post(`/rbac/rules`, { rbacRules: values });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -27,24 +25,16 @@ export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
     try {
       const res = await this.client.get(`/rbac/rules`);
       return res.data.map((x: any) => new RbacRule(x));
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
   async create(name: RbacRule['name']) {
     try {
       await this.client.post(`/rbac/rules`, { name });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -52,12 +42,8 @@ export default class RbacHttpRuleAdapter implements RbacRuleAdapter {
     try {
       const res = await this.client.get(`/rbac/rules/${name}`);
       return res.data == null ? null : new RbacRule(res.data);
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error(error.toString());
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 }

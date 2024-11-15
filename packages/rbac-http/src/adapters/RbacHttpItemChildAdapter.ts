@@ -2,6 +2,8 @@ import { AxiosInstance } from 'axios';
 
 import { RbacItem, RbacItemChild, RbacItemChildAdapter } from '@brainstaff/rbac';
 
+import { rethrow } from '../utils/rethrow';
+
 export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
   private client: AxiosInstance;
 
@@ -14,12 +16,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
   async store(values: RbacItemChild[]) {
     try {
       await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -27,24 +25,16 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
     try {
       const res = await this.client.get(`/rbac/item-children`);
       return res.data.map((x: any) => new RbacItemChild(x));
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
   async create(parent: RbacItem['name'], child: RbacItem['name']) {
     try {
       await this.client.post(`/rbac/item-children`, { parent, child });
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -52,12 +42,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
     try {
       const res = await this.client.get(`/rbac/item-children/${parent}/${child}`);
       return res.data == null ? null : new RbacItemChild(res.data);
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 
@@ -65,12 +51,8 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
     try {
       const res = await this.client.get(`/rbac/item-children/${parent}`);
       return res.data.map((x: any) => new RbacItemChild(x));
-    } catch (error: any) {
-      if (error.response.data.message) {
-        throw new Error(error.response.data.message);
-      } else {
-        throw new Error("Unknown error.");
-      }
+    } catch (err) {
+      rethrow(err);
     }
   }
 }
