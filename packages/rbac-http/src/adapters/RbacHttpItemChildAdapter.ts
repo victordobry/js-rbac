@@ -13,46 +13,31 @@ export default class RbacHttpItemChildAdapter implements RbacItemChildAdapter {
     this.client = deps.client;
   }
 
+  @rethrow
   async store(values: RbacItemChild[]) {
-    try {
-      await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.post(`/rbac/item-children`, { rbacItemChildren: values });
   }
 
+  @rethrow
   async load() {
-    try {
-      const res = await this.client.get(`/rbac/item-children`);
-      return res.data.map((x: any) => new RbacItemChild(x));
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/item-children`);
+    return res.data.map((x: any) => new RbacItemChild(x));
   }
 
+  @rethrow
   async create(parent: RbacItem['name'], child: RbacItem['name']) {
-    try {
-      await this.client.post(`/rbac/item-children`, { parent, child });
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.post(`/rbac/item-children`, { parent, child });
   }
 
+  @rethrow
   async find(parent: RbacItem['name'], child: RbacItem['name']) {
-    try {
-      const res = await this.client.get(`/rbac/item-children/${parent}/${child}`);
-      return res.data == null ? null : new RbacItemChild(res.data);
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/item-children/${parent}/${child}`);
+    return res.data == null ? null : new RbacItemChild(res.data);
   }
 
+  @rethrow
   async findByParent(parent: RbacItem['name']) {
-    try {
-      const res = await this.client.get(`/rbac/item-children/${parent}`);
-      return res.data.map((x: any) => new RbacItemChild(x));
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/item-children/${parent}`);
+    return res.data.map((x: any) => new RbacItemChild(x));
   }
 }

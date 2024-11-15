@@ -13,62 +13,41 @@ export default class RbacHttpAssignmentAdapter implements RbacAssignmentAdapter 
     this.client = deps.client;
   }
 
+  @rethrow
   async store(values: RbacAssignment[]) {
-    try {
-      await this.client.post(`/rbac/assignments`, { rbacAssignments: values });
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.post(`/rbac/assignments`, { rbacAssignments: values });
   }
 
+  @rethrow
   async load() {
-    try {
-      const res = await this.client.get(`/rbac/assignments`);
-      return res.data.map((x: any) => new RbacAssignment(x));
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/assignments`);
+    return res.data.map((x: any) => new RbacAssignment(x));
   }
 
+  @rethrow
   async create(userId: RbacUserId, role: RbacItem['name']) {
-    try {
-      await this.client.post(`/rbac/assignments`, { userId, role });
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.post(`/rbac/assignments`, { userId, role });
   }
 
+  @rethrow
   async find(userId: RbacUserId, role: RbacItem['name']) {
-    try {
-      const res = await this.client.get(`/rbac/assignments/${userId}/${role}`);
-      return res.data == null ? null : new RbacAssignment(res.data);
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/assignments/${userId}/${role}`);
+    return res.data == null ? null : new RbacAssignment(res.data);
   }
 
+  @rethrow
   async findByUserId(userId: RbacUserId) {
-    try {
-      const res = await this.client.get(`/rbac/assignments/${userId}`);
-      return res.data.map((x: any) => new RbacAssignment(x));
-    } catch (err) {
-      rethrow(err);
-    }
+    const res = await this.client.get(`/rbac/assignments/${userId}`);
+    return res.data.map((x: any) => new RbacAssignment(x));
   }
 
+  @rethrow
   async delete(userId: RbacUserId, role: RbacItem['name']) {
-    try {
-      await this.client.delete(`/rbac/assignments/${userId}/${role}`);
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.delete(`/rbac/assignments/${userId}/${role}`);
   }
 
+  @rethrow
   async deleteByUser(userId: RbacUserId) {
-    try {
-      await this.client.delete(`/rbac/assignments/${userId}`);
-    } catch (err) {
-      rethrow(err);
-    }
+    await this.client.delete(`/rbac/assignments/${userId}`);
   }
 }
