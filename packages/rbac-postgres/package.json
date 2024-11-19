@@ -1,6 +1,6 @@
 {
     "name": "@brainstaff/rbac-postgres",
-    "version": "1.0.0-beta.10",
+    "version": "1.0.0-beta.11",
     "description": "RBAC postgres adapter.",
     "main": "dist/index.js",
     "types": "src/index.ts",
@@ -20,7 +20,7 @@
         "test": "mocha -r tsx ./test/test.ts"
     },
     "dependencies": {
-        "@brainstaff/rbac": "^1.0.0-beta.10"
+        "@brainstaff/rbac": "^1.0.0-beta.11"
     },
     "devDependencies": {
         "@rollup/plugin-typescript": "^12.1.1",
