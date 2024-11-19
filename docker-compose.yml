@@ -1,0 +1,27 @@
+name: brainstaff
+volumes:
+  mongo:
+  postgres:
+networks:
+    default:
+      name: brainstaff
+services:
+  mongo:
+    image: mongo:8
+    volumes:
+      - mongo:/data/db
+    ports:
+      - 27017:27017
+    container_name: brainstaff_mongo
+    restart: unless-stopped
+  postgres:
+    image: postgres:17
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    container_name: brainstaff_postgres
+    restart: unless-stopped

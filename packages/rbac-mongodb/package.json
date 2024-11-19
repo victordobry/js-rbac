@@ -3,6 +3,7 @@
     "version": "1.0.0-beta.10",
     "description": "RBAC mongodb adapter.",
     "main": "dist/index.js",
+    "types": "src/index.ts",
     "author": "Ilya Lebedev <ilyaleb@gmail.com>",
     "license": "MIT",
     "publishConfig": {
@@ -13,20 +14,28 @@
         "url": "https://github.com/brainstaff/js-rbac.git"
     },
     "scripts": {
+        "check": "tsc --noEmit",
         "clean": "rm -rf dist",
-        "build": "rollup -c rollup.config.js",
-        "test": "mocha"
+        "build": "rollup -c rollup.config.mjs",
+        "test": "mocha -r tsx ./test/test.ts"
     },
     "dependencies": {
         "@brainstaff/rbac": "^1.0.0-beta.10"
     },
     "devDependencies": {
-        "chai": "^4.1.2",
-        "mocha": "^5.2.0",
-        "mongoose": "^5.2.3",
-        "rollup": "^0.62.0"
+        "@rollup/plugin-typescript": "^12.1.1",
+        "@tsconfig/node20": "^20.1.4",
+        "@types/chai": "^5.0.1",
+        "@types/mocha": "^10.0.9",
+        "@types/node": "^22.9.0",
+        "chai": "^5.1.2",
+        "mocha": "^10.8.2",
+        "mongoose": "^8.8.0",
+        "rollup": "^4.24.4",
+        "tsx": "^4.19.2",
+        "typescript": "^5.6.3"
     },
     "peerDependencies": {
-        "mongoose": "^5.2.3"
+        "mongoose": "^8.8.0"
     }
 }
