@@ -39,7 +39,7 @@ class MongooseConnection {
   }
 }
 
-const mongooseConnection = new MongooseConnection('mongodb://localhost:27017/rbac-test', {
+const mongooseConnection = new MongooseConnection(`mongodb://localhost:${process.env.MONGO_PORT}/rbac-test`, {
   logger: {
     info: (message: string) => console.log(message),
   },
