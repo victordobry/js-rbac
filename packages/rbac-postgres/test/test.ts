@@ -15,6 +15,7 @@ let client = knex({
   client: 'pg',
   connection: {
     host: '127.0.0.1',
+    port: Number(process.env.POSTGRES_PORT),
     user: 'postgres',
     password: 'password',
     database: 'postgres'
@@ -35,6 +36,7 @@ before(async () => {
     client: 'pg',
     connection: {
       host: '127.0.0.1',
+      port: Number(process.env.POSTGRES_PORT),
       user: 'postgres',
       password: 'password',
       database: 'rbac_postgres_test'
