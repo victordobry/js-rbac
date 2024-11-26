@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-beta.12
+
+### feature/compose-env
+
+- Allow to customize ports.
+
 ## 1.0.0-beta.11
 
 - Migrate library to TS.
